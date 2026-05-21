@@ -23,5 +23,12 @@ namespace WingBiteFinalProject
             salesOrder.Show();
             this.Hide();
         }
+
+        private void btnUser_Click(object sender, EventArgs e)
+        {
+            User_Management user = new User_Management();
+            user.Show();
+            this.Hide();
+        }
     }
 }
