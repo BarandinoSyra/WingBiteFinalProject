@@ -37,14 +37,7 @@
             this.lblOrderType = new System.Windows.Forms.Label();
             this.lblOrderNum = new System.Windows.Forms.Label();
             this.dgvCurrentOrder = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colQuantity = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colTotal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvMenuItems = new System.Windows.Forms.DataGridView();
-            this.colID = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.colName = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.colPrice = new System.Windows.Forms.DataGridViewButtonColumn();
             this.lblCurrentOrder = new System.Windows.Forms.Label();
             this.lblMenuItems = new System.Windows.Forms.Label();
             this.txtQuantity = new System.Windows.Forms.TextBox();
@@ -59,6 +52,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.picboxSalesOrderForm = new System.Windows.Forms.PictureBox();
             this.lblSalesOrderForm = new System.Windows.Forms.Label();
+            this.rbAll = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCurrentOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMenuItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxSalesOrderForm)).BeginInit();
@@ -66,18 +60,20 @@
             // 
             // txtOrderNumber
             // 
-            this.txtOrderNumber.Location = new System.Drawing.Point(193, 130);
+            this.txtOrderNumber.Location = new System.Drawing.Point(290, 200);
+            this.txtOrderNumber.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtOrderNumber.Name = "txtOrderNumber";
-            this.txtOrderNumber.Size = new System.Drawing.Size(189, 20);
+            this.txtOrderNumber.Size = new System.Drawing.Size(282, 26);
             this.txtOrderNumber.TabIndex = 43;
             // 
             // rbDrinks
             // 
             this.rbDrinks.AutoSize = true;
             this.rbDrinks.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbDrinks.Location = new System.Drawing.Point(487, 170);
+            this.rbDrinks.Location = new System.Drawing.Point(730, 262);
+            this.rbDrinks.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbDrinks.Name = "rbDrinks";
-            this.rbDrinks.Size = new System.Drawing.Size(73, 23);
+            this.rbDrinks.Size = new System.Drawing.Size(100, 28);
             this.rbDrinks.TabIndex = 42;
             this.rbDrinks.TabStop = true;
             this.rbDrinks.Text = "Drinks";
@@ -88,9 +84,10 @@
             // 
             this.rbRicePlatter.AutoSize = true;
             this.rbRicePlatter.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbRicePlatter.Location = new System.Drawing.Point(368, 171);
+            this.rbRicePlatter.Location = new System.Drawing.Point(552, 263);
+            this.rbRicePlatter.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbRicePlatter.Name = "rbRicePlatter";
-            this.rbRicePlatter.Size = new System.Drawing.Size(102, 23);
+            this.rbRicePlatter.Size = new System.Drawing.Size(141, 28);
             this.rbRicePlatter.TabIndex = 41;
             this.rbRicePlatter.TabStop = true;
             this.rbRicePlatter.Text = "Rice Platter";
@@ -101,9 +98,10 @@
             // 
             this.rbWings.AutoSize = true;
             this.rbWings.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbWings.Location = new System.Drawing.Point(284, 169);
+            this.rbWings.Location = new System.Drawing.Point(426, 260);
+            this.rbWings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbWings.Name = "rbWings";
-            this.rbWings.Size = new System.Drawing.Size(69, 23);
+            this.rbWings.Size = new System.Drawing.Size(94, 28);
             this.rbWings.TabIndex = 40;
             this.rbWings.TabStop = true;
             this.rbWings.Text = "Wings";
@@ -114,27 +112,33 @@
             // 
             this.lblCategory.AutoSize = true;
             this.lblCategory.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCategory.Location = new System.Drawing.Point(198, 172);
+            this.lblCategory.Location = new System.Drawing.Point(193, 265);
+            this.lblCategory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCategory.Name = "lblCategory";
-            this.lblCategory.Size = new System.Drawing.Size(75, 19);
+            this.lblCategory.Size = new System.Drawing.Size(102, 24);
             this.lblCategory.TabIndex = 39;
             this.lblCategory.Text = "Category: ";
             // 
             // cmbOrderType
             // 
             this.cmbOrderType.FormattingEnabled = true;
-            this.cmbOrderType.Location = new System.Drawing.Point(490, 129);
+            this.cmbOrderType.Items.AddRange(new object[] {
+            "Dine In",
+            "Take Out"});
+            this.cmbOrderType.Location = new System.Drawing.Point(735, 198);
+            this.cmbOrderType.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmbOrderType.Name = "cmbOrderType";
-            this.cmbOrderType.Size = new System.Drawing.Size(167, 21);
+            this.cmbOrderType.Size = new System.Drawing.Size(248, 28);
             this.cmbOrderType.TabIndex = 38;
             // 
             // lblOrderType
             // 
             this.lblOrderType.AutoSize = true;
             this.lblOrderType.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOrderType.Location = new System.Drawing.Point(400, 129);
+            this.lblOrderType.Location = new System.Drawing.Point(600, 198);
+            this.lblOrderType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOrderType.Name = "lblOrderType";
-            this.lblOrderType.Size = new System.Drawing.Size(91, 19);
+            this.lblOrderType.Size = new System.Drawing.Size(126, 24);
             this.lblOrderType.TabIndex = 37;
             this.lblOrderType.Text = "Order Type: ";
             // 
@@ -142,9 +146,10 @@
             // 
             this.lblOrderNum.AutoSize = true;
             this.lblOrderNum.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOrderNum.Location = new System.Drawing.Point(120, 129);
+            this.lblOrderNum.Location = new System.Drawing.Point(180, 198);
+            this.lblOrderNum.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOrderNum.Name = "lblOrderNum";
-            this.lblOrderNum.Size = new System.Drawing.Size(67, 19);
+            this.lblOrderNum.Size = new System.Drawing.Size(92, 24);
             this.lblOrderNum.TabIndex = 36;
             this.lblOrderNum.Text = "Order #: ";
             // 
@@ -152,73 +157,42 @@
             // 
             this.dgvCurrentOrder.BackgroundColor = System.Drawing.Color.DarkSeaGreen;
             this.dgvCurrentOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCurrentOrder.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.colQuantity,
-            this.colTotal});
-            this.dgvCurrentOrder.Location = new System.Drawing.Point(413, 226);
+            this.dgvCurrentOrder.Location = new System.Drawing.Point(579, 348);
+            this.dgvCurrentOrder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dgvCurrentOrder.Name = "dgvCurrentOrder";
+            this.dgvCurrentOrder.ReadOnly = true;
+            this.dgvCurrentOrder.RowHeadersVisible = false;
             this.dgvCurrentOrder.RowHeadersWidth = 62;
-            this.dgvCurrentOrder.Size = new System.Drawing.Size(329, 305);
+            this.dgvCurrentOrder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dgvCurrentOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvCurrentOrder.Size = new System.Drawing.Size(589, 469);
             this.dgvCurrentOrder.TabIndex = 47;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Product Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.HeaderText = "Price";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // colQuantity
-            // 
-            this.colQuantity.HeaderText = "Quantity";
-            this.colQuantity.Name = "colQuantity";
-            // 
-            // colTotal
-            // 
-            this.colTotal.HeaderText = "Total";
-            this.colTotal.Name = "colTotal";
+            this.dgvCurrentOrder.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCurrentOrder_CellContentClick);
             // 
             // dgvMenuItems
             // 
             this.dgvMenuItems.BackgroundColor = System.Drawing.Color.DarkSeaGreen;
             this.dgvMenuItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvMenuItems.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colID,
-            this.colName,
-            this.colPrice});
-            this.dgvMenuItems.Location = new System.Drawing.Point(62, 226);
+            this.dgvMenuItems.Location = new System.Drawing.Point(34, 348);
+            this.dgvMenuItems.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dgvMenuItems.Name = "dgvMenuItems";
+            this.dgvMenuItems.ReadOnly = true;
+            this.dgvMenuItems.RowHeadersVisible = false;
             this.dgvMenuItems.RowHeadersWidth = 62;
-            this.dgvMenuItems.Size = new System.Drawing.Size(319, 305);
+            this.dgvMenuItems.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dgvMenuItems.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvMenuItems.Size = new System.Drawing.Size(537, 469);
             this.dgvMenuItems.TabIndex = 46;
-            // 
-            // colID
-            // 
-            this.colID.HeaderText = "Product ID";
-            this.colID.Name = "colID";
-            // 
-            // colName
-            // 
-            this.colName.HeaderText = "Product Name";
-            this.colName.Name = "colName";
-            // 
-            // colPrice
-            // 
-            this.colPrice.HeaderText = "Price";
-            this.colPrice.Name = "colPrice";
+            this.dgvMenuItems.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMenuItems_CellContentClick);
             // 
             // lblCurrentOrder
             // 
             this.lblCurrentOrder.AutoSize = true;
             this.lblCurrentOrder.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentOrder.Location = new System.Drawing.Point(410, 204);
+            this.lblCurrentOrder.Location = new System.Drawing.Point(615, 314);
+            this.lblCurrentOrder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCurrentOrder.Name = "lblCurrentOrder";
-            this.lblCurrentOrder.Size = new System.Drawing.Size(109, 19);
+            this.lblCurrentOrder.Size = new System.Drawing.Size(151, 24);
             this.lblCurrentOrder.TabIndex = 45;
             this.lblCurrentOrder.Text = "Current Order: ";
             // 
@@ -226,26 +200,30 @@
             // 
             this.lblMenuItems.AutoSize = true;
             this.lblMenuItems.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMenuItems.Location = new System.Drawing.Point(59, 204);
+            this.lblMenuItems.Location = new System.Drawing.Point(88, 314);
+            this.lblMenuItems.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMenuItems.Name = "lblMenuItems";
-            this.lblMenuItems.Size = new System.Drawing.Size(95, 19);
+            this.lblMenuItems.Size = new System.Drawing.Size(131, 24);
             this.lblMenuItems.TabIndex = 44;
             this.lblMenuItems.Text = "Menu Items: ";
             // 
             // txtQuantity
             // 
-            this.txtQuantity.Location = new System.Drawing.Point(142, 549);
+            this.txtQuantity.Location = new System.Drawing.Point(213, 845);
+            this.txtQuantity.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtQuantity.Name = "txtQuantity";
-            this.txtQuantity.Size = new System.Drawing.Size(100, 20);
+            this.txtQuantity.Size = new System.Drawing.Size(148, 26);
             this.txtQuantity.TabIndex = 55;
+            this.txtQuantity.TextChanged += new System.EventHandler(this.txtQuantity_TextChanged);
             // 
             // lblSubtotalResult
             // 
             this.lblSubtotalResult.AutoSize = true;
             this.lblSubtotalResult.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubtotalResult.Location = new System.Drawing.Point(411, 549);
+            this.lblSubtotalResult.Location = new System.Drawing.Point(616, 845);
+            this.lblSubtotalResult.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSubtotalResult.Name = "lblSubtotalResult";
-            this.lblSubtotalResult.Size = new System.Drawing.Size(69, 19);
+            this.lblSubtotalResult.Size = new System.Drawing.Size(93, 24);
             this.lblSubtotalResult.TabIndex = 54;
             this.lblSubtotalResult.Text = "Subtotal:";
             // 
@@ -253,9 +231,10 @@
             // 
             this.lblSubtotal.AutoSize = true;
             this.lblSubtotal.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubtotal.Location = new System.Drawing.Point(487, 549);
+            this.lblSubtotal.Location = new System.Drawing.Point(730, 845);
+            this.lblSubtotal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSubtotal.Name = "lblSubtotal";
-            this.lblSubtotal.Size = new System.Drawing.Size(106, 19);
+            this.lblSubtotal.Size = new System.Drawing.Size(146, 24);
             this.lblSubtotal.TabIndex = 53;
             this.lblSubtotal.Text = "Subtotal result";
             // 
@@ -263,9 +242,10 @@
             // 
             this.lblQuantity.AutoSize = true;
             this.lblQuantity.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblQuantity.Location = new System.Drawing.Point(59, 549);
+            this.lblQuantity.Location = new System.Drawing.Point(88, 845);
+            this.lblQuantity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblQuantity.Name = "lblQuantity";
-            this.lblQuantity.Size = new System.Drawing.Size(77, 19);
+            this.lblQuantity.Size = new System.Drawing.Size(103, 24);
             this.lblQuantity.TabIndex = 52;
             this.lblQuantity.Text = "Quantity: ";
             // 
@@ -274,9 +254,10 @@
             this.btnAddToOrder.BackColor = System.Drawing.Color.MediumTurquoise;
             this.btnAddToOrder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddToOrder.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddToOrder.Location = new System.Drawing.Point(274, 541);
+            this.btnAddToOrder.Location = new System.Drawing.Point(411, 832);
+            this.btnAddToOrder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAddToOrder.Name = "btnAddToOrder";
-            this.btnAddToOrder.Size = new System.Drawing.Size(108, 27);
+            this.btnAddToOrder.Size = new System.Drawing.Size(162, 42);
             this.btnAddToOrder.TabIndex = 51;
             this.btnAddToOrder.Text = "Add to Order";
             this.btnAddToOrder.UseVisualStyleBackColor = false;
@@ -287,9 +268,10 @@
             this.btnClearOrder.BackColor = System.Drawing.Color.OrangeRed;
             this.btnClearOrder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearOrder.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClearOrder.Location = new System.Drawing.Point(318, 595);
+            this.btnClearOrder.Location = new System.Drawing.Point(477, 915);
+            this.btnClearOrder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClearOrder.Name = "btnClearOrder";
-            this.btnClearOrder.Size = new System.Drawing.Size(158, 31);
+            this.btnClearOrder.Size = new System.Drawing.Size(237, 48);
             this.btnClearOrder.TabIndex = 50;
             this.btnClearOrder.Text = "CLEAR ORDER";
             this.btnClearOrder.UseVisualStyleBackColor = false;
@@ -300,9 +282,10 @@
             this.btnRemoveItem.BackColor = System.Drawing.Color.Crimson;
             this.btnRemoveItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRemoveItem.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRemoveItem.Location = new System.Drawing.Point(154, 595);
+            this.btnRemoveItem.Location = new System.Drawing.Point(231, 915);
+            this.btnRemoveItem.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRemoveItem.Name = "btnRemoveItem";
-            this.btnRemoveItem.Size = new System.Drawing.Size(158, 31);
+            this.btnRemoveItem.Size = new System.Drawing.Size(237, 48);
             this.btnRemoveItem.TabIndex = 49;
             this.btnRemoveItem.Text = "REMOVE ITEM";
             this.btnRemoveItem.UseVisualStyleBackColor = false;
@@ -313,9 +296,10 @@
             this.btnCheckout.BackColor = System.Drawing.Color.SeaGreen;
             this.btnCheckout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCheckout.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCheckout.Location = new System.Drawing.Point(482, 595);
+            this.btnCheckout.Location = new System.Drawing.Point(723, 915);
+            this.btnCheckout.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCheckout.Name = "btnCheckout";
-            this.btnCheckout.Size = new System.Drawing.Size(158, 31);
+            this.btnCheckout.Size = new System.Drawing.Size(237, 48);
             this.btnCheckout.TabIndex = 48;
             this.btnCheckout.Text = "CHECKOUT";
             this.btnCheckout.UseVisualStyleBackColor = false;
@@ -326,9 +310,10 @@
             this.btnBack.BackColor = System.Drawing.Color.Maroon;
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBack.Location = new System.Drawing.Point(12, 653);
+            this.btnBack.Location = new System.Drawing.Point(18, 1005);
+            this.btnBack.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(96, 35);
+            this.btnBack.Size = new System.Drawing.Size(144, 54);
             this.btnBack.TabIndex = 56;
             this.btnBack.Text = "BACK";
             this.btnBack.UseVisualStyleBackColor = false;
@@ -339,18 +324,20 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Stencil", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
-            this.label1.Location = new System.Drawing.Point(268, 84);
+            this.label1.Location = new System.Drawing.Point(402, 129);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(262, 31);
+            this.label1.Size = new System.Drawing.Size(389, 46);
             this.label1.TabIndex = 57;
             this.label1.Text = "ORDER ENTRY FORM";
             // 
             // picboxSalesOrderForm
             // 
             this.picboxSalesOrderForm.Image = global::WingBiteFinalProject.Properties.Resources.asdfdg_removebg_preview;
-            this.picboxSalesOrderForm.Location = new System.Drawing.Point(12, 12);
+            this.picboxSalesOrderForm.Location = new System.Drawing.Point(18, 18);
+            this.picboxSalesOrderForm.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.picboxSalesOrderForm.Name = "picboxSalesOrderForm";
-            this.picboxSalesOrderForm.Size = new System.Drawing.Size(102, 74);
+            this.picboxSalesOrderForm.Size = new System.Drawing.Size(153, 114);
             this.picboxSalesOrderForm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picboxSalesOrderForm.TabIndex = 12;
             this.picboxSalesOrderForm.TabStop = false;
@@ -360,18 +347,33 @@
             this.lblSalesOrderForm.AutoSize = true;
             this.lblSalesOrderForm.Font = new System.Drawing.Font("Stencil", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSalesOrderForm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
-            this.lblSalesOrderForm.Location = new System.Drawing.Point(120, 34);
+            this.lblSalesOrderForm.Location = new System.Drawing.Point(180, 52);
+            this.lblSalesOrderForm.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSalesOrderForm.Name = "lblSalesOrderForm";
-            this.lblSalesOrderForm.Size = new System.Drawing.Size(180, 31);
+            this.lblSalesOrderForm.Size = new System.Drawing.Size(263, 46);
             this.lblSalesOrderForm.TabIndex = 11;
             this.lblSalesOrderForm.Text = "SALES ORDER";
             // 
+            // rbAll
+            // 
+            this.rbAll.AutoSize = true;
+            this.rbAll.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbAll.Location = new System.Drawing.Point(322, 263);
+            this.rbAll.Name = "rbAll";
+            this.rbAll.Size = new System.Drawing.Size(65, 28);
+            this.rbAll.TabIndex = 58;
+            this.rbAll.TabStop = true;
+            this.rbAll.Text = "All";
+            this.rbAll.UseVisualStyleBackColor = true;
+            this.rbAll.CheckedChanged += new System.EventHandler(this.rbAll_CheckedChanged);
+            // 
             // Sales_Order_Module
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.ClientSize = new System.Drawing.Size(800, 700);
+            this.ClientSize = new System.Drawing.Size(1200, 1077);
+            this.Controls.Add(this.rbAll);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.txtQuantity);
@@ -397,8 +399,10 @@
             this.Controls.Add(this.picboxSalesOrderForm);
             this.Controls.Add(this.lblSalesOrderForm);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Sales_Order_Module";
             this.Text = "Sales_Order_Module";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Sales_Order_Module_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCurrentOrder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMenuItems)).EndInit();
@@ -420,14 +424,7 @@
         private System.Windows.Forms.Label lblOrderType;
         private System.Windows.Forms.Label lblOrderNum;
         private System.Windows.Forms.DataGridView dgvCurrentOrder;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colQuantity;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colTotal;
         private System.Windows.Forms.DataGridView dgvMenuItems;
-        private System.Windows.Forms.DataGridViewButtonColumn colID;
-        private System.Windows.Forms.DataGridViewButtonColumn colName;
-        private System.Windows.Forms.DataGridViewButtonColumn colPrice;
         private System.Windows.Forms.Label lblCurrentOrder;
         private System.Windows.Forms.Label lblMenuItems;
         private System.Windows.Forms.TextBox txtQuantity;
@@ -441,5 +438,6 @@
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblSalesOrderForm;
+        private System.Windows.Forms.RadioButton rbAll;
     }
 }
