@@ -7,14 +7,185 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace WingBiteFinalProject
 {
     public partial class Inventory_Tracking : Form
     {
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        private int selectedInventoryID = -1;
+
         public Inventory_Tracking()
         {
             InitializeComponent();
+            this.Load += new System.EventHandler(this.Inventory_Tracking_Load_1);
+            this.dgvInventory.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvInventory_DataBindingComplete);
+        }
+
+        private void Inventory_Tracking_Load_1(object sender, EventArgs e)
+        {
+            LoadInventory();
+        }
+
+        public void LoadInventory()
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    
+                    // The threshold has been updated: 20 or less will indicate 'Low Stock'
+                    string query = @"SELECT InventoryID, category, currentstock, 
+                             CASE 
+                                 WHEN currentstock <= 0 THEN 'Out Of Stock'
+                                 WHEN currentstock <= 20 THEN 'Low Stock'
+                                 ELSE 'In Stock'
+                             END AS [Stock Status],
+                             FORMAT(dateReceived, 'MMMM dd, yyyy') AS [Date Received], 
+                             FORMAT(lastupdated, 'dd-MMM-yyyy hh:mm tt') AS [Last Updated] 
+                             FROM inventoryTBL";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvInventory.DataSource = dt;
+
+                    if (dgvInventory.Columns["InventoryID"] != null)
+                    {
+                        dgvInventory.Columns["InventoryID"].Visible = false;
+                    }
+                    dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dgvInventory.ClearSelection();
+                    selectedInventoryID = -1;
+                    lblProductNameHere.Text = "Product Name here";
+                    lblCurrentStockResult.Text = "Current Stock here";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading inventory: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void dgvInventory_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dgvInventory.ClearSelection();
+        }
+
+        private void btnLowStockReport_Click(object sender, EventArgs e)
+        {
+            Show_Low_Stock_report lowStock = new Show_Low_Stock_report();
+            lowStock.Show();
+            this.Hide();
+        }
+
+        private void btnAddProduct_Click(object sender, EventArgs e)
+        {
+            Add_Product add = new Add_Product();
+            add.Show();
+            this.Hide();
+        }
+
+        private void dgvInventory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dgvInventory.Rows[e.RowIndex];
+
+                if (row.Cells["InventoryID"].Value != DBNull.Value && row.Cells["InventoryID"].Value != null)
+                {
+                    selectedInventoryID = Convert.ToInt32(row.Cells["InventoryID"].Value);
+                    lblProductNameHere.Text = row.Cells["category"].Value?.ToString() ?? "";
+                    lblCurrentStockResult.Text = row.Cells["currentstock"].Value?.ToString() ?? "0";
+                    lblProductNameHere.Visible = true;
+                    lblCurrentStockResult.Visible = true;
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (dgvInventory.DataSource is DataTable dt)
+            {
+                dt.DefaultView.RowFilter = string.Format("category LIKE '%{0}%'", txtSearch.Text.Replace("'", "''"));
+            }
+            else
+            {
+                MessageBox.Show("No data available to filter. Please try refreshing the list.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnRefresh_Click_1(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+
+            if (dgvInventory.DataSource is DataTable dt)
+            {
+                dt.DefaultView.RowFilter = string.Empty;
+            }
+        }
+
+        private void btnUpdateStock_Click(object sender, EventArgs e)
+        {
+            if (selectedInventoryID == -1)
+            {
+                MessageBox.Show("Please select a product from the list above first.", "Reminder", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!int.TryParse(txtAdjustProduct.Text, out int newStock))
+            {
+                MessageBox.Show("Please enter a valid numeric value for Adjust Stock.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string updateQuery = "UPDATE inventoryTBL SET currentstock = @NewStock, lastupdated = GETDATE() WHERE InventoryID = @InventoryID";
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@NewStock", newStock);
+                        cmd.Parameters.AddWithValue("@InventoryID", selectedInventoryID);
+
+                        conn.Open();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Stock updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            txtAdjustProduct.Clear();
+                            lblCurrentStockResult.Text = newStock.ToString();
+
+                            LoadInventory();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to update stock. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred while updating: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        private void dgvInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+        }
+
+        private void btnRefreshAll_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            LoadInventory();
+            lblCurrentStockResult.Visible = false;
+            lblProductNameHere.Visible = false;
         }
     }
 }
