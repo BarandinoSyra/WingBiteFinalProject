@@ -462,5 +462,10 @@ namespace WingBiteFinalProject
         private void txtQuantity_TextChanged(object sender, EventArgs e)
         {
         }
+
+        private void cmbOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

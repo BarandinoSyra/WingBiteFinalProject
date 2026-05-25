@@ -170,6 +170,12 @@
     <Compile Include="Inventory Tracking.Designer.cs">
       <DependentUpon>Inventory Tracking.cs</DependentUpon>
     </Compile>
+    <Compile Include="Inventory_Add_Product.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Inventory_Add_Product.Designer.cs">
+      <DependentUpon>Inventory_Add_Product.cs</DependentUpon>
+    </Compile>
     <Compile Include="Kitchen Queue Display.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,6 +205,12 @@
     </Compile>
     <Compile Include="PaymentForm.Designer.cs">
       <DependentUpon>PaymentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory_archive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Inventory_archive.Designer.cs">
+      <DependentUpon>Inventory_archive.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -265,6 +277,9 @@
     <EmbeddedResource Include="Inventory Tracking.resx">
       <DependentUpon>Inventory Tracking.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Inventory_Add_Product.resx">
+      <DependentUpon>Inventory_Add_Product.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Kitchen Queue Display.resx">
       <DependentUpon>Kitchen Queue Display.cs</DependentUpon>
     </EmbeddedResource>
@@ -279,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PaymentForm.resx">
       <DependentUpon>PaymentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inventory_archive.resx">
+      <DependentUpon>Inventory_archive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

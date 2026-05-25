@@ -252,6 +252,7 @@
             this.btnProducts.TabIndex = 5;
             this.btnProducts.Text = "MENU/PRODUCT";
             this.btnProducts.UseVisualStyleBackColor = false;
+            this.btnProducts.Click += new System.EventHandler(this.btnProducts_Click);
             // 
             // btnInventory
             // 
@@ -265,6 +266,7 @@
             this.btnInventory.TabIndex = 4;
             this.btnInventory.Text = "INVETORY";
             this.btnInventory.UseVisualStyleBackColor = false;
+            this.btnInventory.Click += new System.EventHandler(this.btnInventory_Click);
             // 
             // btnUser
             // 

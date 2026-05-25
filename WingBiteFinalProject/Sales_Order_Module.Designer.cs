@@ -130,6 +130,7 @@
             this.cmbOrderType.Name = "cmbOrderType";
             this.cmbOrderType.Size = new System.Drawing.Size(248, 28);
             this.cmbOrderType.TabIndex = 38;
+            this.cmbOrderType.SelectedIndexChanged += new System.EventHandler(this.cmbOrderType_SelectedIndexChanged);
             // 
             // lblOrderType
             // 

@@ -30,5 +30,19 @@ namespace WingBiteFinalProject
             user.Show();
             this.Hide();
         }
+
+        private void btnProducts_Click(object sender, EventArgs e)
+        {
+            Menu_or_Product_Module menu = new Menu_or_Product_Module();
+            menu.Show();
+            this.Hide();
+        }
+
+        private void btnInventory_Click(object sender, EventArgs e)
+        {
+            Inventory_Tracking inventory = new Inventory_Tracking();
+            inventory.Show();
+            this.Hide();
+        }
     }
 }

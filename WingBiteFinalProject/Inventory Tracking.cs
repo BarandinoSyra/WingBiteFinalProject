@@ -35,27 +35,32 @@ namespace WingBiteFinalProject
                 try
                 {
                     conn.Open();
-                    
-                    // The threshold has been updated: 20 or less will indicate 'Low Stock'
-                    string query = @"SELECT InventoryID, category, currentstock, 
+                    // Idinagdag ang WHERE isArchived = 0 para hindi lumabas ang mga itinabing produkto
+                    string query = @"SELECT 
+                             RIGHT('0000' + CAST(inventoryID AS VARCHAR), 4) AS [Inventory ID],
+                             category AS [Category], 
+                             currentstock AS [Stock], 
                              CASE 
                                  WHEN currentstock <= 0 THEN 'Out Of Stock'
                                  WHEN currentstock <= 20 THEN 'Low Stock'
                                  ELSE 'In Stock'
                              END AS [Stock Status],
                              FORMAT(dateReceived, 'MMMM dd, yyyy') AS [Date Received], 
-                             FORMAT(lastupdated, 'dd-MMM-yyyy hh:mm tt') AS [Last Updated] 
-                             FROM inventoryTBL";
+                             FORMAT(lastupdated, 'dd-MMM-yyyy hh:mm tt') AS [Last Updated],
+                             inventoryID
+                             FROM inventoryTBL
+                             WHERE isArchived = 0 OR isArchived IS NULL";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
                     dgvInventory.DataSource = dt;
 
-                    if (dgvInventory.Columns["InventoryID"] != null)
+                    if (dgvInventory.Columns["inventoryID"] != null)
                     {
-                        dgvInventory.Columns["InventoryID"].Visible = false;
+                        dgvInventory.Columns["inventoryID"].Visible = false;
                     }
+
                     dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                     dgvInventory.ClearSelection();
                     selectedInventoryID = -1;
@@ -83,8 +88,8 @@ namespace WingBiteFinalProject
 
         private void btnAddProduct_Click(object sender, EventArgs e)
         {
-            Add_Product add = new Add_Product();
-            add.Show();
+            Inventory_Add_Product addinvproduct = new Inventory_Add_Product();
+            addinvproduct.Show();
             this.Hide();
         }
 
@@ -94,11 +99,11 @@ namespace WingBiteFinalProject
             {
                 DataGridViewRow row = dgvInventory.Rows[e.RowIndex];
 
-                if (row.Cells["InventoryID"].Value != DBNull.Value && row.Cells["InventoryID"].Value != null)
+                if (row.Cells["inventoryID"].Value != DBNull.Value && row.Cells["inventoryID"].Value != null)
                 {
-                    selectedInventoryID = Convert.ToInt32(row.Cells["InventoryID"].Value);
-                    lblProductNameHere.Text = row.Cells["category"].Value?.ToString() ?? "";
-                    lblCurrentStockResult.Text = row.Cells["currentstock"].Value?.ToString() ?? "0";
+                    selectedInventoryID = Convert.ToInt32(row.Cells["inventoryID"].Value);
+                    lblProductNameHere.Text = row.Cells["Category"].Value?.ToString() ?? "";
+                    lblCurrentStockResult.Text = row.Cells["Stock"].Value?.ToString() ?? "0";
                     lblProductNameHere.Visible = true;
                     lblCurrentStockResult.Visible = true;
                 }
@@ -109,7 +114,7 @@ namespace WingBiteFinalProject
         {
             if (dgvInventory.DataSource is DataTable dt)
             {
-                dt.DefaultView.RowFilter = string.Format("category LIKE '%{0}%'", txtSearch.Text.Replace("'", "''"));
+                dt.DefaultView.RowFilter = string.Format("Category LIKE '%{0}%'", txtSearch.Text.Replace("'", "''"));
             }
             else
             {
@@ -141,7 +146,7 @@ namespace WingBiteFinalProject
                 return;
             }
 
-            string updateQuery = "UPDATE inventoryTBL SET currentstock = @NewStock, lastupdated = GETDATE() WHERE InventoryID = @InventoryID";
+            string updateQuery = "UPDATE inventoryTBL SET currentstock = @NewStock, lastupdated = GETDATE() WHERE inventoryID = @InventoryID";
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -176,6 +181,7 @@ namespace WingBiteFinalProject
                 }
             }
         }
+
         private void dgvInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
         }
@@ -186,6 +192,57 @@ namespace WingBiteFinalProject
             LoadInventory();
             lblCurrentStockResult.Visible = false;
             lblProductNameHere.Visible = false;
+        }
+
+        private void btnremove_Click(object sender, EventArgs e)
+        {
+            if (selectedInventoryID == -1)
+            {
+                MessageBox.Show("Please select a product from the list to archive first.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Are you sure you want to remove this product and move it to the archive section?", "Confirm Archive", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                string archiveQuery = "UPDATE inventoryTBL SET isArchived = 1, lastupdated = GETDATE() WHERE inventoryID = @InventoryID";
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    try
+                    {
+                        using (SqlCommand cmd = new SqlCommand(archiveQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@InventoryID", selectedInventoryID);
+
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                MessageBox.Show("Product has been successfully moved to the archive.", "Archived", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                LoadInventory();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Failed to archive the product. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred while archiving: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void btnArchive_Click(object sender, EventArgs e)
+        {
+            Inventory_archive archiveForm = new Inventory_archive();
+            archiveForm.Show();
+            this.Hide();
         }
     }
 }
