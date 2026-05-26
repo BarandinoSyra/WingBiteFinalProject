@@ -27,6 +27,27 @@ namespace WingBiteFinalProject
             InitializeComponent();
             _mainForm = mainForm;
         }
+        private bool DoesInventoryIDExist(int id)
+        {
+            string checkQuery = "SELECT COUNT(1) FROM inventoryTBL WHERE inventoryID = @ID";
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(checkQuery, conn);
+                    cmd.Parameters.AddWithValue("@ID", id);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -43,22 +64,35 @@ namespace WingBiteFinalProject
         private void btnSubmit_Click_1(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtProductName.Text.Trim()) ||
-                        cmbCategory.SelectedItem == null ||
-                        string.IsNullOrEmpty(txtUnit.Text.Trim()) ||
-                        string.IsNullOrEmpty(txtPrice.Text.Trim()))
+         cmbCategory.SelectedItem == null ||
+         string.IsNullOrEmpty(txtUnit.Text.Trim()) ||
+         string.IsNullOrEmpty(txtPrice.Text.Trim()) ||
+         string.IsNullOrEmpty(txtInventoryID.Text.Trim()))
             {
                 MessageBox.Show("Please fill out all fields before submitting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Kumpirmasyon bago i-save
+            // 2. Make sure it is actually a valid integer
+            if (!int.TryParse(txtInventoryID.Text.Trim(), out int inventoryID))
+            {
+                MessageBox.Show("Inventory ID must be a valid number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 3. Database check: Does this Inventory ID actually exist?
+            if (!DoesInventoryIDExist(inventoryID))
+            {
+                MessageBox.Show($"The Inventory ID '{inventoryID}' does not exist in the system. Please verify the ID or create the inventory item first.",
+                                "Foreign Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             DialogResult result = MessageBox.Show("Do you want to save this new product?", "Confirm Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
-                // Idagdag ang @InventoryID sa VALUES clause
                 string query = "INSERT INTO productsTBL (InventoryID, ProductName, category, currentstock, price) VALUES (@InventoryID, @Name, @Category, @Stock, @Price)";
-                
+
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     try
@@ -69,16 +103,16 @@ namespace WingBiteFinalProject
                         cmd.Parameters.AddWithValue("@Category", cmbCategory.SelectedItem.ToString());
                         cmd.Parameters.AddWithValue("@Stock", Convert.ToInt32(txtUnit.Text.Trim()));
                         cmd.Parameters.AddWithValue("@Price", Convert.ToDecimal(txtPrice.Text.Trim()));
-                        cmd.Parameters.AddWithValue("@InventoryID", Convert.ToInt32(txtInventoryID.Text.Trim()));
+                        cmd.Parameters.AddWithValue("@InventoryID", inventoryID); // Used parsed int variable
 
                         cmd.ExecuteNonQuery();
                         MessageBox.Show("Product added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        // I-refresh ang grid sa Main Form at isara ang window na ito
-                        _mainForm.LoadProducts();
-                        Menu_or_Product_Module menu = new Menu_or_Product_Module();
-                        menu.Show();
-                        this.Hide();
+                        // Safely refresh and handle window state
+                        if (_mainForm != null)
+                        {
+                            _mainForm.LoadProducts();
+                        }
                     }
                     catch (Exception ex)
                     {

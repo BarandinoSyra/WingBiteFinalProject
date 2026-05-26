@@ -110,6 +110,13 @@ namespace WingBiteFinalProject
             cmbCategory.SelectedIndex = -1;
             txtUnit.Clear();
         }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            Inventory_Tracking inventory = new Inventory_Tracking();
+            inventory.Show();
+            this.Hide();
+        }
     }
 }
     

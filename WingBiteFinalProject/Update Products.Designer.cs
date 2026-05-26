@@ -98,7 +98,7 @@
             this.btnFindID.Location = new System.Drawing.Point(549, 215);
             this.btnFindID.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnFindID.Name = "btnFindID";
-            this.btnFindID.Size = new System.Drawing.Size(120, 45);
+            this.btnFindID.Size = new System.Drawing.Size(120, 39);
             this.btnFindID.TabIndex = 64;
             this.btnFindID.Text = "Find Name";
             this.btnFindID.UseVisualStyleBackColor = false;
@@ -123,12 +123,12 @@
             // 
             this.lblUpdateProduct.AutoSize = true;
             this.lblUpdateProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.lblUpdateProduct.Font = new System.Drawing.Font("Bauhaus 93", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateProduct.Font = new System.Drawing.Font("Book Antiqua", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblUpdateProduct.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
-            this.lblUpdateProduct.Location = new System.Drawing.Point(336, 154);
+            this.lblUpdateProduct.Location = new System.Drawing.Point(335, 153);
             this.lblUpdateProduct.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblUpdateProduct.Name = "lblUpdateProduct";
-            this.lblUpdateProduct.Size = new System.Drawing.Size(243, 36);
+            this.lblUpdateProduct.Size = new System.Drawing.Size(271, 39);
             this.lblUpdateProduct.TabIndex = 62;
             this.lblUpdateProduct.Text = "EDIT PRODUCT";
             // 
@@ -173,6 +173,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Edit_Product_Search";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Update_Products";
             this.Load += new System.EventHandler(this.Edit_Product_Search_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProducts)).EndInit();

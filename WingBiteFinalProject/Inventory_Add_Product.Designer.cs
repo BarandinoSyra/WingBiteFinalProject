@@ -76,7 +76,7 @@
             this.btnSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSubmit.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSubmit.ForeColor = System.Drawing.Color.White;
-            this.btnSubmit.Location = new System.Drawing.Point(781, 490);
+            this.btnSubmit.Location = new System.Drawing.Point(772, 381);
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(144, 54);
@@ -91,13 +91,14 @@
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Location = new System.Drawing.Point(4, 490);
+            this.btnBack.Location = new System.Drawing.Point(13, 381);
             this.btnBack.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(144, 54);
             this.btnBack.TabIndex = 74;
             this.btnBack.Text = "BACK";
             this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // txtUnit
             // 
@@ -150,19 +151,19 @@
             // 
             this.lblAddProduct.AutoSize = true;
             this.lblAddProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.lblAddProduct.Font = new System.Drawing.Font("Bauhaus 93", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAddProduct.Font = new System.Drawing.Font("Book Antiqua", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAddProduct.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
             this.lblAddProduct.Location = new System.Drawing.Point(313, 134);
             this.lblAddProduct.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAddProduct.Name = "lblAddProduct";
-            this.lblAddProduct.Size = new System.Drawing.Size(242, 36);
+            this.lblAddProduct.Size = new System.Drawing.Size(270, 39);
             this.lblAddProduct.TabIndex = 66;
             this.lblAddProduct.Text = "ADD PRODUCT";
             // 
             // picboxMenuProductManagement
             // 
             this.picboxMenuProductManagement.Image = global::WingBiteFinalProject.Properties.Resources.kitchen_que_removebg_preview1;
-            this.picboxMenuProductManagement.Location = new System.Drawing.Point(4, -14);
+            this.picboxMenuProductManagement.Location = new System.Drawing.Point(13, 14);
             this.picboxMenuProductManagement.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.picboxMenuProductManagement.Name = "picboxMenuProductManagement";
             this.picboxMenuProductManagement.Size = new System.Drawing.Size(153, 122);
@@ -175,7 +176,7 @@
             this.lblMenuProductManagement.AutoSize = true;
             this.lblMenuProductManagement.Font = new System.Drawing.Font("Stencil", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMenuProductManagement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
-            this.lblMenuProductManagement.Location = new System.Drawing.Point(166, 25);
+            this.lblMenuProductManagement.Location = new System.Drawing.Point(169, 49);
             this.lblMenuProductManagement.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMenuProductManagement.Name = "lblMenuProductManagement";
             this.lblMenuProductManagement.Size = new System.Drawing.Size(671, 46);
@@ -187,7 +188,7 @@
             // 
             this.lblinventoryID.AutoSize = true;
             this.lblinventoryID.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblinventoryID.Location = new System.Drawing.Point(378, 207);
+            this.lblinventoryID.Location = new System.Drawing.Point(378, 202);
             this.lblinventoryID.Name = "lblinventoryID";
             this.lblinventoryID.Size = new System.Drawing.Size(148, 28);
             this.lblinventoryID.TabIndex = 78;
@@ -197,7 +198,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 542);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
+            this.ClientSize = new System.Drawing.Size(929, 449);
             this.Controls.Add(this.lblinventoryID);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmbCategory);
@@ -210,6 +212,7 @@
             this.Controls.Add(this.lblAddProduct);
             this.Controls.Add(this.picboxMenuProductManagement);
             this.Controls.Add(this.lblMenuProductManagement);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Inventory_Add_Product";
             this.Text = "Inventory_Add_Product";
             ((System.ComponentModel.ISupportInitialize)(this.picboxMenuProductManagement)).EndInit();

@@ -47,6 +47,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.picboxMenuProductManagement)).BeginInit();
             this.SuspendLayout();
             // 
+            // lblCategoryResult
+            // 
+            lblCategoryResult.AutoSize = true;
+            lblCategoryResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
+            lblCategoryResult.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            lblCategoryResult.ForeColor = System.Drawing.Color.Black;
+            lblCategoryResult.Location = new System.Drawing.Point(240, 300);
+            lblCategoryResult.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblCategoryResult.Name = "lblCategoryResult";
+            lblCategoryResult.Size = new System.Drawing.Size(115, 28);
+            lblCategoryResult.TabIndex = 84;
+            lblCategoryResult.Text = "Category:";
+            // 
             // lblProductName
             // 
             this.lblProductName.AutoSize = true;
@@ -177,12 +190,12 @@
             // 
             this.lblUpdateProduct.AutoSize = true;
             this.lblUpdateProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.lblUpdateProduct.Font = new System.Drawing.Font("Bauhaus 93", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateProduct.Font = new System.Drawing.Font("Book Antiqua", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblUpdateProduct.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(48)))), ((int)(((byte)(79)))));
-            this.lblUpdateProduct.Location = new System.Drawing.Point(336, 146);
+            this.lblUpdateProduct.Location = new System.Drawing.Point(335, 144);
             this.lblUpdateProduct.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblUpdateProduct.Name = "lblUpdateProduct";
-            this.lblUpdateProduct.Size = new System.Drawing.Size(243, 36);
+            this.lblUpdateProduct.Size = new System.Drawing.Size(271, 39);
             this.lblUpdateProduct.TabIndex = 71;
             this.lblUpdateProduct.Text = "EDIT PRODUCT";
             // 
@@ -208,19 +221,6 @@
             this.picboxMenuProductManagement.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picboxMenuProductManagement.TabIndex = 70;
             this.picboxMenuProductManagement.TabStop = false;
-            // 
-            // lblCategoryResult
-            // 
-            lblCategoryResult.AutoSize = true;
-            lblCategoryResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            lblCategoryResult.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            lblCategoryResult.ForeColor = System.Drawing.Color.Black;
-            lblCategoryResult.Location = new System.Drawing.Point(240, 300);
-            lblCategoryResult.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            lblCategoryResult.Name = "lblCategoryResult";
-            lblCategoryResult.Size = new System.Drawing.Size(115, 28);
-            lblCategoryResult.TabIndex = 84;
-            lblCategoryResult.Text = "Category:";
             // 
             // lblProductNameResult
             // 

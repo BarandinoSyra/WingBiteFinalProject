@@ -78,7 +78,7 @@
             this.rbDrinks.TabStop = true;
             this.rbDrinks.Text = "Drinks";
             this.rbDrinks.UseVisualStyleBackColor = true;
-            this.rbDrinks.CheckedChanged += new System.EventHandler(this.rbDrinks_CheckedChanged);
+            this.rbDrinks.CheckedChanged += new System.EventHandler(this.rbDrinks_CheckedChanged_1);
             // 
             // rbRicePlatter
             // 
@@ -92,7 +92,7 @@
             this.rbRicePlatter.TabStop = true;
             this.rbRicePlatter.Text = "Rice Platter";
             this.rbRicePlatter.UseVisualStyleBackColor = true;
-            this.rbRicePlatter.CheckedChanged += new System.EventHandler(this.rbRicePlatter_CheckedChanged);
+            this.rbRicePlatter.CheckedChanged += new System.EventHandler(this.rbRicePlatter_CheckedChanged_1);
             // 
             // rbWings
             // 
@@ -106,7 +106,7 @@
             this.rbWings.TabStop = true;
             this.rbWings.Text = "Wings";
             this.rbWings.UseVisualStyleBackColor = true;
-            this.rbWings.CheckedChanged += new System.EventHandler(this.rbWings_CheckedChanged);
+            this.rbWings.CheckedChanged += new System.EventHandler(this.rbWings_CheckedChanged_1);
             // 
             // lblCategory
             // 
@@ -130,7 +130,6 @@
             this.cmbOrderType.Name = "cmbOrderType";
             this.cmbOrderType.Size = new System.Drawing.Size(248, 28);
             this.cmbOrderType.TabIndex = 38;
-            this.cmbOrderType.SelectedIndexChanged += new System.EventHandler(this.cmbOrderType_SelectedIndexChanged);
             // 
             // lblOrderType
             // 
@@ -168,7 +167,7 @@
             this.dgvCurrentOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCurrentOrder.Size = new System.Drawing.Size(589, 469);
             this.dgvCurrentOrder.TabIndex = 47;
-            this.dgvCurrentOrder.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCurrentOrder_CellContentClick);
+            this.dgvCurrentOrder.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCurrentOrder_CellContentClick_1);
             // 
             // dgvMenuItems
             // 
@@ -184,7 +183,7 @@
             this.dgvMenuItems.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvMenuItems.Size = new System.Drawing.Size(537, 469);
             this.dgvMenuItems.TabIndex = 46;
-            this.dgvMenuItems.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMenuItems_CellContentClick);
+            this.dgvMenuItems.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMenuItems_CellContentClick_1);
             // 
             // lblCurrentOrder
             // 
@@ -215,7 +214,6 @@
             this.txtQuantity.Name = "txtQuantity";
             this.txtQuantity.Size = new System.Drawing.Size(148, 26);
             this.txtQuantity.TabIndex = 55;
-            this.txtQuantity.TextChanged += new System.EventHandler(this.txtQuantity_TextChanged);
             // 
             // lblSubtotalResult
             // 
@@ -304,7 +302,7 @@
             this.btnCheckout.TabIndex = 48;
             this.btnCheckout.Text = "CHECKOUT";
             this.btnCheckout.UseVisualStyleBackColor = false;
-            this.btnCheckout.Click += new System.EventHandler(this.btnCheckout_Click);
+            this.btnCheckout.Click += new System.EventHandler(this.btnCheckout_Click_1);
             // 
             // btnBack
             // 
@@ -318,7 +316,7 @@
             this.btnBack.TabIndex = 56;
             this.btnBack.Text = "BACK";
             this.btnBack.UseVisualStyleBackColor = false;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click_1);
             // 
             // label1
             // 
@@ -366,7 +364,7 @@
             this.rbAll.TabStop = true;
             this.rbAll.Text = "All";
             this.rbAll.UseVisualStyleBackColor = true;
-            this.rbAll.CheckedChanged += new System.EventHandler(this.rbAll_CheckedChanged);
+            this.rbAll.CheckedChanged += new System.EventHandler(this.rbAll_CheckedChanged_1);
             // 
             // Sales_Order_Module
             // 
@@ -404,7 +402,6 @@
             this.Name = "Sales_Order_Module";
             this.Text = "Sales_Order_Module";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.Sales_Order_Module_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCurrentOrder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMenuItems)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxSalesOrderForm)).EndInit();

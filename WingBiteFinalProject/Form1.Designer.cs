@@ -211,6 +211,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "LoginForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.panelWallpaper.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picboxWallpaper)).EndInit();
             this.panel1.ResumeLayout(false);
