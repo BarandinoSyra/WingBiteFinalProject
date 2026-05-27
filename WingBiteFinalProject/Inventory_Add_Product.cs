@@ -33,6 +33,7 @@ namespace WingBiteFinalProject
                         {
                             int nextID = Convert.ToInt32(result);
                             lblinventoryID.Text = nextID.ToString("D4");
+                            
                         }
                     }
                 }
@@ -116,6 +117,11 @@ namespace WingBiteFinalProject
             Inventory_Tracking inventory = new Inventory_Tracking();
             inventory.Show();
             this.Hide();
+        }
+
+        private void Inventory_Add_Product_Load(object sender, EventArgs e)
+        {
+            GetInventoryID();
         }
     }
 }

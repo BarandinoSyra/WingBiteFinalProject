@@ -80,6 +80,7 @@ namespace WingBiteFinalProject
             Inventory_Add_Product addinvproduct = new Inventory_Add_Product();
             addinvproduct.Show();
             this.Hide();
+            
         }
         private void dgvInventory_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
