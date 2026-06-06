@@ -114,6 +114,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Show_Low_Stock_report";
             this.Text = "Show_Low_Stock_report";
+            this.Load += new System.EventHandler(this.Show_Low_Stock_report_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvLowStockReport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventoryTracking)).EndInit();
             this.ResumeLayout(false);

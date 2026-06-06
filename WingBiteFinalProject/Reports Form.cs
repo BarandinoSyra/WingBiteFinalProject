@@ -13,7 +13,7 @@ namespace WingBiteFinalProject
 {
     public partial class Reports_Form : Form
     {
-        string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private string currentReportType = "";
 
         public Reports_Form()
@@ -193,6 +193,11 @@ namespace WingBiteFinalProject
 
         private void Reports_Form_Load(object sender, EventArgs e)
         {
+        }
+
+        private void dgvReportData_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

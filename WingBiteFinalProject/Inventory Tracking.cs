@@ -12,11 +12,13 @@ namespace WingBiteFinalProject
 {
     public partial class Inventory_Tracking : Form
     {
-        string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private int selectedInventoryID = -1;
         public Inventory_Tracking()
         {
             InitializeComponent();
+            lblProductNameHere.Visible = false;
+            lblCurrentStockResult.Visible = false;
             this.Load += new System.EventHandler(this.Inventory_Tracking_Load_1);
             this.dgvInventory.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvInventory_DataBindingComplete);
         }
@@ -58,6 +60,7 @@ namespace WingBiteFinalProject
                     selectedInventoryID = -1;
                     lblProductNameHere.Text = "Product Name here";
                     lblCurrentStockResult.Text = "Current Stock here";
+
                 }
                 catch (Exception ex)
                 {

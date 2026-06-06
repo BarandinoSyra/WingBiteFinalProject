@@ -12,7 +12,7 @@ namespace WingBiteFinalProject
 {
     public partial class Sales_Order_Module : Form
     {
-        private string connString = @"Data Source=YJAIXX_COLIE\SQLEXPRESS;Initial Catalog=WingBiteDB;Integrated Security=True";
+        private string connString = @"Data Source=DESKTOP-JG0361V\SQLEXPRESS;Initial Catalog=WingBiteDB;Integrated Security=True";
         public Sales_Order_Module()
         {
             InitializeComponent();

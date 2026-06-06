@@ -228,6 +228,7 @@ namespace WingBiteFinalProject
                             MessageBox.Show("Data row safely dropped from SSMS logging records.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadUserData();
                             ClearFields();
+                           
                         }
                     }
                 }

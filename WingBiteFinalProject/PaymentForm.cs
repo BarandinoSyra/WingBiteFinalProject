@@ -75,6 +75,8 @@ namespace WingBiteFinalProject
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+        
+        
         private void btnCancelPay_Click(object sender, EventArgs e)
         {
             this.Close();

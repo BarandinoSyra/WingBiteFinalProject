@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace WingBiteFinalProject
 {
@@ -17,6 +18,7 @@ namespace WingBiteFinalProject
         {
             InitializeComponent();
         }
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
         private void btnSales_Click(object sender, EventArgs e)
         {
@@ -62,20 +64,68 @@ namespace WingBiteFinalProject
 
         private void panelDashboard_Paint(object sender, PaintEventArgs e)
         {
+            string query = "SELECT COUNT(*) From inventoryTBL Where currentStock <= 20";
+           using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    int lowStockCount = (int)cmd.ExecuteScalar();
+                    lblOrdersValue.Text = lowStockCount.ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error fetching low stock count: " + ex.Message);
+                }
+
+                
+            }
+      
 
         }
+        private void LoadDailySummarySales()
+        {
+            string query = "SELECT SUM(totalPrice) FROM salesTBL WHERE CAST(SaleDate AS DATE) = CAST(GETDATE() AS DATE)";
 
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != DBNull.Value && result != null)
+                    {
+                        lblSalesPrice.Text = "₱" + Convert.ToDouble(result).ToString("N2");
+                    }
+                    else
+                    {
+                        lblSalesPrice.Text = "₱0.00";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
+        }
         private void Main_Page_Load(object sender, EventArgs e)
         {
             if (!LoginForm.CurrentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-              
+
                 btnUser.Visible = false;
 
-              
+
                 btnReports.Visible = false;
             }
+            LoadDailySummarySales();
+
+        }
+               
         
     }
     }
-}
+

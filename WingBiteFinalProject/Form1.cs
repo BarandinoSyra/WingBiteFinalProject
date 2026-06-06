@@ -35,7 +35,7 @@ namespace WingBiteFinalProject
             }
 
             // dito mag base kayo sa ssms nyo, palitan ang server name.
-            string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+            string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
             string query = @"SELECT userID, Fullname, Role FROM UserTBL 
                              WHERE username = @User 
