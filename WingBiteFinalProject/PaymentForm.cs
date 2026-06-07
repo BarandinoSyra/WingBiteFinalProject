@@ -65,7 +65,7 @@ namespace WingBiteFinalProject
             {
                 double discountDeduct = originalTotal * DiscountRate;
                 finalTotal = originalTotal - discountDeduct;
-            }
+            } 
             else
             {
                 finalTotal = originalTotal;
