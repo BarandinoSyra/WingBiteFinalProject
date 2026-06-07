@@ -17,7 +17,7 @@ namespace WingBiteFinalProject
         {
             InitializeComponent();
         }
-        private string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        private string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
         public void UserManagementForm()
         {
@@ -71,7 +71,17 @@ namespace WingBiteFinalProject
 
         private void dgvUsers_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            if (dgvUsers.SelectedRows.Count > -1)
+            {
+                DataGridViewRow selectedRow = dgvUsers.SelectedRows[0];
+                txtUsername.Text = selectedRow.Cells["username"].Value.ToString();
+                txtFullName.Text = selectedRow.Cells["Fullname"].Value.ToString();
+                txtPassword.Text = selectedRow.Cells["password"].Value.ToString();
+                txtConfirmPassword.Text = selectedRow.Cells["password"].Value.ToString();
+                cmbRole.Text = selectedRow.Cells["Role"].Value.ToString();
+                cmbStatus.Text = selectedRow.Cells["UserStatus"].Value.ToString();
+            }
+           
         }
 
         private void btnRefreshList_Click(object sender, EventArgs e)

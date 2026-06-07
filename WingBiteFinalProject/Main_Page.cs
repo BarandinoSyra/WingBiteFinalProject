@@ -14,7 +14,7 @@ namespace WingBiteFinalProject
     public partial class Main_Page : Form
     {
 
-        public Main_Page()
+        public Main_Page() 
         {
             InitializeComponent();
         }
@@ -124,8 +124,27 @@ namespace WingBiteFinalProject
             LoadDailySummarySales();
 
         }
-               
-        
+
+        private void dgvRecentOrders_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string query = "SELECT TOP 5 orderID, totalPrice, SaleDate FROM salesTBL ORDER BY SaleDate DESC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvRecentOrders.DataSource = dt;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error fetching recent orders: " + ex.Message);
+                }
+
+            }
+        }
     }
     }
 

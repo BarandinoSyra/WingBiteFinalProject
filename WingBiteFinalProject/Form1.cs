@@ -18,10 +18,16 @@ namespace WingBiteFinalProject
         public static string CurrentUserID = string.Empty;
         public static string CurrentUserFullName = string.Empty;
         public static string CurrentUserRole = string.Empty;
+       
         public LoginForm()
         {
             InitializeComponent();
+            
+            txtUsername.KeyDown += txtUsername_KeyDown;
+            txtPassword.KeyDown += txtPassword_KeyDown;
+
         }
+        
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -33,8 +39,6 @@ namespace WingBiteFinalProject
                 MessageBox.Show("Please enter both Username and Password.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            // dito mag base kayo sa ssms nyo, palitan ang server name.
             string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
             string query = @"SELECT userID, Fullname, Role FROM UserTBL 
@@ -71,7 +75,6 @@ namespace WingBiteFinalProject
                             }
                             else
                             {
-                                // Kung walang nahanap na record (maling password, maling username, o kaya Inactive ang account)
                                 MessageBox.Show("Invalid Username or Password, or account is Inactive.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                     }
@@ -100,6 +103,42 @@ namespace WingBiteFinalProject
                 txtPassword.UseSystemPasswordChar = true;
 
             }
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+          
+        }
+
+        private void txtUsername_KeyDown(object sender, KeyEventArgs e)
+        {
+            
+            if (e.KeyCode == Keys.Enter)
+            {
+               txtPassword.Focus();
+                e.SuppressKeyPress = true;
+            }
+
+        }
+
+        private void txtPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnLogin.PerformClick();
+                e.SuppressKeyPress = true;
+            }
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            txtUsername.Focus();
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            txtUsername.Focus();
         }
     }
 }

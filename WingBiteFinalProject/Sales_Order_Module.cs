@@ -21,6 +21,7 @@ namespace WingBiteFinalProject
             btnAddToOrder.Enabled = false;
             rbAll.Checked = true;
             LoadMenuItems("All");
+          
         }
         private void SetupCurrentOrderDGV()
         {
@@ -83,12 +84,7 @@ namespace WingBiteFinalProject
         }
         private void btnAddToOrder_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtOrderNumber.Text))
-            {
-                MessageBox.Show("Please enter an Order # manually.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtOrderNumber.Focus();
-                return;
-            }
+           
             if (cmbOrderType.SelectedItem == null)
             {
                 MessageBox.Show("Please select an Order Type (Dine In / Take Out).", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -216,72 +212,52 @@ namespace WingBiteFinalProject
                 MessageBox.Show("The order list is empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            string orderNum = txtOrderNumber.Text;
+
+            if (cmbOrderType.SelectedItem == null)
+            {
+                MessageBox.Show("Please select an Order Type before checking out.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             double currentSubtotal = Convert.ToDouble(lblSubtotal.Text);
-            if (string.IsNullOrWhiteSpace(orderNum))
+            string selectedOrderType = cmbOrderType.SelectedItem.ToString();
+            int generatedOrderID = 0;
+
+            // Gumamit ng hiwalay at localized connection para siguradong sarado ito pagkatapos ng block
+            using (SqlConnection conn = new SqlConnection(connString))
             {
-                MessageBox.Show("Please ensure there is an Order # before checking out.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            PaymentForm payment = new PaymentForm(orderNum, currentSubtotal);
-            if (payment.ShowDialog() == DialogResult.OK)
-            {
-                dgvCurrentOrder.Rows.Clear();
-                txtOrderNumber.Clear();
-                lblSubtotal.Text = "0.00";
-            }
-        }
-        private void btnClearOrder_Click(object sender, EventArgs e)
-        {
-            if (dgvCurrentOrder.Rows.Count == 0)
-            {
-                MessageBox.Show("There are no orders to clear.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            if (dgvCurrentOrder.CurrentRow == null || dgvCurrentOrder.SelectedRows.Count == 0 || dgvCurrentOrder.CurrentRow.IsNewRow)
-            {
-                MessageBox.Show("Please click or select an item from the Current Order list first before clearing.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            DialogResult result = MessageBox.Show("Are you sure you want to clear the entire order? This will restore all stock levels.", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                using (SqlConnection conn = new SqlConnection(connString))
+                string query = @"INSERT INTO ordersTBL (orderType, paymentMethod) VALUES (@orderType, 'Pending');
+                         SELECT SCOPE_IDENTITY();";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    cmd.Parameters.AddWithValue("@orderType", selectedOrderType);
+
                     try
                     {
                         conn.Open();
-                        foreach (DataGridViewRow row in dgvCurrentOrder.Rows)
-                        {
-                            if (row.IsNewRow) continue;
-                            string prodName = row.Cells["ProductName"].Value.ToString();
-                            int qtyToReturn = Convert.ToInt32(row.Cells["Quantity"].Value);
-                            string restoreQuery = "UPDATE productsTBL SET currentstock = currentstock + @Qty WHERE productName = @ProductName";
-                            using (SqlCommand cmd = new SqlCommand(restoreQuery, conn))
-                            {
-                                cmd.Parameters.AddWithValue("@Qty", qtyToReturn);
-                                cmd.Parameters.AddWithValue("@ProductName", prodName);
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                        dgvCurrentOrder.Rows.Clear();
-                        if (rbAll.Checked) LoadMenuItems("All");
-                        else if (rbWings.Checked) LoadMenuItems("Wings");
-                        else if (rbRicePlatter.Checked) LoadMenuItems("Rice Platter");
-                        else if (rbDrinks.Checked) LoadMenuItems("Drinks");
-                        UpdateSubtotal();
-                        txtOrderNumber.Clear();
-                        dgvCurrentOrder.ClearSelection();
-                        dgvCurrentOrder.CurrentCell = null;
-                        MessageBox.Show("All orders have been cleared and stocks are fully restored.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Dito natin nakukuha ang auto-incremented ID mula sa SQL (e.g., 1001)
+                        generatedOrderID = Convert.ToInt32(cmd.ExecuteScalar());
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error restoring stocks: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Error generating Order Number:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
                 }
+            } // Garantisadong sarado ang koneksyon dito, kaya iwas sa "connection was not closed" error
+
+            // IPINAPASA ANG GENERATED ID: Dito natin ipapasa ang numero sa PaymentForm
+            PaymentForm payment = new PaymentForm(currentSubtotal, selectedOrderType, generatedOrderID);
+
+            if (payment.ShowDialog() == DialogResult.OK)
+            {
+                lblSubtotal.Text = "0.00";
+                cmbOrderType.SelectedIndex = -1;
             }
         }
+            
+        
         private void dgvMenuItems_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dgvMenuItems.Rows[e.RowIndex].Cells["productName"].Value != null)
@@ -303,6 +279,7 @@ namespace WingBiteFinalProject
 
         private void Sales_Order_Module_Load(object sender, EventArgs e)
         {
+           
 
         }
     }

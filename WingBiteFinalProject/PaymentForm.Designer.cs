@@ -117,7 +117,7 @@
             // 
             this.lblOrderNumResult.AutoSize = true;
             this.lblOrderNumResult.Font = new System.Drawing.Font("Book Antiqua", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOrderNumResult.Location = new System.Drawing.Point(324, 182);
+            this.lblOrderNumResult.Location = new System.Drawing.Point(302, 182);
             this.lblOrderNumResult.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOrderNumResult.Name = "lblOrderNumResult";
             this.lblOrderNumResult.Size = new System.Drawing.Size(185, 24);
