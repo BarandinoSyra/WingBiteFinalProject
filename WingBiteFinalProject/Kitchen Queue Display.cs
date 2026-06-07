@@ -13,7 +13,6 @@ namespace WingBiteFinalProject
 {
     public partial class Kitchen_Queue_Display : Form
     {
-        // Connection string patungo sa iyong lokal na SQLEXPRESS database
         private string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
         public Kitchen_Queue_Display()
@@ -22,7 +21,6 @@ namespace WingBiteFinalProject
             LoadAllQueues();
         }
 
-        // Method para sabay-sabay na i-refresh ang tatlong DataGridView
         private void LoadAllQueues()
         {
             LoadQueue(dgvPendingOrders, "Pending");
@@ -30,12 +28,12 @@ namespace WingBiteFinalProject
             LoadQueue(dgvReadyToServe, "Serving");
         }
 
-        // Pagkuha ng data base sa totoong schema ng KitchenTBL at ordersTBL mo
         private void LoadQueue(DataGridView dgv, string status)
         {
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = @"SELECT k.KitchenID, k.OrderID, o.TimePlaced, o.orderType, o.orderstatus
+                // BAGONG DAGDAG: Nilagyan natin ng explicit "o.OrderID AS [OrderID]" para siguradong 'OrderID' ang pangalan ng kolum sa DataTable
+                string query = @"SELECT k.KitchenID, o.OrderID AS [OrderID], o.TimePlaced, o.orderType, o.orderstatus
                                  FROM KitchenTBL k
                                  JOIN ordersTBL o ON k.OrderID = o.OrderID
                                  WHERE o.orderstatus = @status
@@ -50,7 +48,6 @@ namespace WingBiteFinalProject
             }
         }
 
-        // Disenyo para sa mga DataGridView para maging malinis tingnan
         private void StyleGrid(DataGridView dgv)
         {
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -59,7 +56,6 @@ namespace WingBiteFinalProject
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
-        // Pangkalahatang method para sa pag-update ng orderstatus sa ordersTBL
         private void UpdateStatus(DataGridView sourceDgv, string newStatus)
         {
             if (sourceDgv.SelectedRows.Count == 0)
@@ -68,8 +64,13 @@ namespace WingBiteFinalProject
                 return;
             }
 
-            // Kukuha ng OrderID mula sa piniling hilera (row) sa DataGridView
-            int orderID = Convert.ToInt32(sourceDgv.SelectedRows[0].Cells["OrderID"].Value);
+            int orderID = GetSelectedOrderID(sourceDgv);
+
+            if (orderID == 0)
+            {
+                MessageBox.Show("Could not retrieve Order ID from selected row.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -90,53 +91,78 @@ namespace WingBiteFinalProject
                 }
             }
 
-            // I-refresh ang display pagkatapos mag-update
             LoadAllQueues();
         }
 
-        // --- MGA EVENT HANDLERS PARA SA MGA BUTTONS ---
+        // BAGONG METHOD: Isang safe na paraan para makuha ang OrderID kahit manu-mano o auto-generated ang column definitions mo
+        private int GetSelectedOrderID(DataGridView dgv)
+        {
+            if (dgv.CurrentRow == null) return 0;
+
+            // Subukan muna kunin gamit ang pangalan ng Column
+            if (dgv.Columns.Contains("OrderID"))
+            {
+                return Convert.ToInt32(dgv.CurrentRow.Cells["OrderID"].Value);
+            }
+
+            // Kung ayaw pa rin sa pangalan, kukunin natin gamit ang pangalawang column (Index 1) dahil sa query natin, pangalawa ang o.OrderID
+            return Convert.ToInt32(dgv.CurrentRow.Cells[1].Value);
+        }
 
         private void btnPreparing_Click(object sender, EventArgs e)
         {
-            // Pag pinindot ito, kukunin ang data sa Pending Grid at gagawing 'Preparing'
             UpdateStatus(dgvPendingOrders, "Preparing");
         }
 
-       
-
         private void btnCompleted_Click(object sender, EventArgs e)
         {
-            // Pag pinindot ito, kukunin ang data sa Ready to Serve Grid at gagawing 'Completed'
             UpdateStatus(dgvReadyToServe, "Completed");
         }
 
         private void btnViewDetails_Click(object sender, EventArgs e)
         {
-            DataGridView selectedDgv = null;
+            int selectedOrderID = 0;
 
-            // Alamin kung saang DataGridView may nakapiling (selected) row
-            if (dgvPendingOrders.SelectedRows.Count > 0)
-                selectedDgv = dgvPendingOrders;
-            else if (dgvPreparingOrders.SelectedRows.Count > 0)
-                selectedDgv = dgvPreparingOrders;
-            else if (dgvReadyToServe.SelectedRows.Count > 0)
-                selectedDgv = dgvReadyToServe;
-
-            if (selectedDgv == null)
+            // 1. Tinitingnan kung saan may aktibong focus/pinili ang user gamit ang bagong safe method natin
+            if (dgvPendingOrders.CurrentRow != null && dgvPendingOrders.ContainsFocus)
             {
-                MessageBox.Show("Please select an order first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                selectedOrderID = GetSelectedOrderID(dgvPendingOrders);
+            }
+            else if (dgvPreparingOrders.CurrentRow != null && dgvPreparingOrders.ContainsFocus)
+            {
+                selectedOrderID = GetSelectedOrderID(dgvPreparingOrders);
+            }
+            else if (dgvReadyToServe.CurrentRow != null && dgvReadyToServe.ContainsFocus)
+            {
+                selectedOrderID = GetSelectedOrderID(dgvReadyToServe);
+            }
+            else
+            {
+                // Fallback kung nawala ang focus sa grid habang kini-click ang button
+                if (dgvPendingOrders.CurrentRow != null)
+                    selectedOrderID = GetSelectedOrderID(dgvPendingOrders);
+                else if (dgvPreparingOrders.CurrentRow != null)
+                    selectedOrderID = GetSelectedOrderID(dgvPreparingOrders);
+                else if (dgvReadyToServe.CurrentRow != null)
+                    selectedOrderID = GetSelectedOrderID(dgvReadyToServe);
             }
 
-            // Buksan ang Order status form gamit ang napiling OrderID
-            int orderID = Convert.ToInt32(selectedDgv.SelectedRows[0].Cells["OrderID"].Value);
-            Order_status_or_order_dispatch orderStatus = new Order_status_or_order_dispatch(orderID);
-            orderStatus.Show();
+            // 2. Pag sigurado nang may ID, ipapasa na natin ito sa Order Dispatch form
+            if (selectedOrderID > 0)
+            {
+                Order_status_or_order_dispatch dispatchForm = new Order_status_or_order_dispatch(selectedOrderID);
+                dispatchForm.Show();
+                this.Hide();
+            }
+            else
+            {
+                MessageBox.Show("Please click on a row containing an order number first before viewing details.",
+                                "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            // Bumalik sa Main Page at isara ang kasalukuyang screen
             Main_Page main = new Main_Page();
             main.Show();
             this.Close();

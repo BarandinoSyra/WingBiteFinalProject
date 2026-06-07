@@ -165,7 +165,7 @@
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Location = new System.Drawing.Point(22, 766);
+            this.btnBack.Location = new System.Drawing.Point(13, 778);
             this.btnBack.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(144, 54);
@@ -216,10 +216,10 @@
             this.btnViewDetails.BackColor = System.Drawing.Color.YellowGreen;
             this.btnViewDetails.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnViewDetails.Font = new System.Drawing.Font("Book Antiqua", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnViewDetails.Location = new System.Drawing.Point(984, 742);
+            this.btnViewDetails.Location = new System.Drawing.Point(1015, 778);
             this.btnViewDetails.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnViewDetails.Name = "btnViewDetails";
-            this.btnViewDetails.Size = new System.Drawing.Size(172, 65);
+            this.btnViewDetails.Size = new System.Drawing.Size(172, 54);
             this.btnViewDetails.TabIndex = 51;
             this.btnViewDetails.Text = "VIEW DETAILS";
             this.btnViewDetails.UseVisualStyleBackColor = false;
@@ -230,7 +230,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.ClientSize = new System.Drawing.Size(1200, 846);
+            this.ClientSize = new System.Drawing.Size(1200, 961);
             this.Controls.Add(this.btnViewDetails);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnServing);

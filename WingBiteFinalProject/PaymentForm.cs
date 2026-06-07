@@ -16,12 +16,10 @@ namespace WingBiteFinalProject
         private double originalTotal;
         private double finalTotal;
         private string orderType;
-        private int currentOrderID; // Dito nakatabi ang ipinasang Auto-Increment ID mula sa Sales Module
+        private int currentOrderID;
         private const double DiscountRate = 0.15;
-
         private string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
-        // Constructor na may 3 parameters para tanggapin ang na-generate na numero agad
         public PaymentForm(double subtotal, string typeOfOrder, int orderID)
         {
             InitializeComponent();
@@ -33,13 +31,10 @@ namespace WingBiteFinalProject
 
         private void PaymentForm_Load(object sender, EventArgs e)
         {
-            // --- GAGAWING VISIBLE AT IPAPAKITA AGAD ANG ORDER NUMBER PAGKALOAD NG FORM ---
             lblOrderNumResult.Text = currentOrderID.ToString();
             lblOrderNumResult.Visible = true;
-
             lblTotalAmountResult.Text = originalTotal.ToString("N2");
             lblFinalTotalResult.Text = originalTotal.ToString("N2");
-
             cmbPaymentMethod.Items.Clear();
             cmbPaymentMethod.Items.Add("Cash");
             cmbPaymentMethod.Items.Add("Gcash");
@@ -54,14 +49,12 @@ namespace WingBiteFinalProject
                 txtAmountTendered.Focus();
                 return;
             }
-
             if (amountTendered < finalTotal)
             {
                 MessageBox.Show("Insufficient amount tendered! The amount provided is less than the final total.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtAmountTendered.Focus();
                 return;
             }
-
             double change = amountTendered - finalTotal;
             lblChangeResult.Text = change.ToString("N2");
         }
@@ -90,14 +83,13 @@ namespace WingBiteFinalProject
             }
 
             string method = cmbPaymentMethod.SelectedItem.ToString();
+            string computedChange = lblChangeResult.Text; // Kunin ang calculated change string para ipasa sa kasunod na form
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 try
                 {
                     conn.Open();
-
-                    // 1. UPDATE: I-update ang paymentMethod at gawing 'Paid' o kung ano man ang workflow mo
                     string updateOrderQuery = "UPDATE ordersTBL SET paymentMethod = @paymentMethod WHERE OrderID = @orderID";
                     using (SqlCommand cmdOrder = new SqlCommand(updateOrderQuery, conn))
                     {
@@ -106,33 +98,43 @@ namespace WingBiteFinalProject
                         cmdOrder.ExecuteNonQuery();
                     }
 
-                    // 2. INSERT TO KITCHEN: Isama ang KitchenID (na gagamit din ng OrderID para pareho sila) at Dispatch
                     string insertKitchenQuery = "INSERT INTO KitchenTBL (KitchenID, OrderID, Dispatch) VALUES (@kitchenID, @orderID, @dispatch)";
                     using (SqlCommand cmdKitchen = new SqlCommand(insertKitchenQuery, conn))
                     {
-                        cmdKitchen.Parameters.AddWithValue("@kitchenID", this.currentOrderID); // Gagamitin ang OrderID bilang KitchenID para iwas NULL error
+                        cmdKitchen.Parameters.AddWithValue("@kitchenID", this.currentOrderID);
                         cmdKitchen.Parameters.AddWithValue("@orderID", this.currentOrderID);
-                        cmdKitchen.Parameters.AddWithValue("@dispatch", "Pending"); // Default string para sa bagong pasok na order
+                        cmdKitchen.Parameters.AddWithValue("@dispatch", "Pending");
                         cmdKitchen.ExecuteNonQuery();
                     }
 
-                    MessageBox.Show($"Payment successful via {method}! Order #{this.currentOrderID} has been sent to the Kitchen.",
-                                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Payment successful via {method}! Order #{this.currentOrderID} has been sent to the Kitchen.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                    // Itakda ang resulta bago maglipat ng form
                     this.DialogResult = DialogResult.OK;
-                    this.Close();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("An error occurred while saving the transaction:\n\n" + ex.Message,
-                                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("An error occurred while saving the transaction:\n\n" + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return; // Huwag magpatuloy sa Transaction Record kung nagkaroon ng error sa database
                 }
             }
+
+            // TUGMAAN NG PARAMETERS:
+            // Ang constructor mo ay naghahanap ng: string orderNumber, string orderType, decimal totalAmount, decimal finalTotal, string paymentMethod, string change
+            Transaction_Record receipt = new Transaction_Record(
+                this.currentOrderID.ToString(), // orderNumber (convert to string kung int ang currentOrderID mo)
+                this.orderType,                 // orderType
+                Convert.ToDecimal(this.originalTotal), // totalAmount
+                Convert.ToDecimal(this.finalTotal),    // finalTotal
+                method,                         // paymentMethod
+                computedChange                  // change
+            );
+            receipt.Show(); // Ipakita ang transaction record form
+            this.Hide();    // Itago lamang ang kasalukuyang billing/payment form imbis na i-Close agad para iwas crash
         }
 
         private void btnCancelPay_Click(object sender, EventArgs e)
         {
-            // Kung ayaw ituloy ang bayad, buburahin natin ang nakareserbang Order ID para malinis ang database
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string deleteQuery = "DELETE FROM ordersTBL WHERE OrderID = @orderID";
@@ -144,10 +146,9 @@ namespace WingBiteFinalProject
                         conn.Open();
                         cmd.ExecuteNonQuery();
                     }
-                    catch { /* Hayaang walang laman para tahimik na mag-close kung magka-error man */ }
+                    catch { }
                 }
             }
-
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }

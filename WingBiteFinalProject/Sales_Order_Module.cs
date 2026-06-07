@@ -8,11 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+
 namespace WingBiteFinalProject
 {
     public partial class Sales_Order_Module : Form
     {
         private string connString = @"Data Source=DESKTOP-JG0361V\SQLEXPRESS;Initial Catalog=WingBiteDB;Integrated Security=True";
+
         public Sales_Order_Module()
         {
             InitializeComponent();
@@ -21,8 +23,8 @@ namespace WingBiteFinalProject
             btnAddToOrder.Enabled = false;
             rbAll.Checked = true;
             LoadMenuItems("All");
-          
         }
+
         private void SetupCurrentOrderDGV()
         {
             dgvCurrentOrder.Columns.Clear();
@@ -34,6 +36,7 @@ namespace WingBiteFinalProject
             dgvCurrentOrder.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCurrentOrder.ClearSelection();
         }
+
         private void LoadMenuItems(string category)
         {
             using (SqlConnection conn = new SqlConnection(connString))
@@ -57,7 +60,7 @@ namespace WingBiteFinalProject
                         da.Fill(dt);
                         dgvMenuItems.DataSource = dt;
                         dgvMenuItems.Columns["productName"].HeaderText = "Product Name";
-                        dgvMenuItems.Columns["Price"].HeaderText = "Price";
+                        dgvMenuItems.Columns["Price"].DefaultCellStyle.Format = "N2";
                         dgvMenuItems.Columns["currentstock"].HeaderText = "currentstock";
                         dgvMenuItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                         dgvMenuItems.ClearSelection();
@@ -70,6 +73,7 @@ namespace WingBiteFinalProject
                 }
             }
         }
+
         private void UpdateSubtotal()
         {
             double subtotal = 0;
@@ -82,9 +86,9 @@ namespace WingBiteFinalProject
             }
             lblSubtotal.Text = subtotal.ToString("N2");
         }
+
         private void btnAddToOrder_Click(object sender, EventArgs e)
         {
-           
             if (cmbOrderType.SelectedItem == null)
             {
                 MessageBox.Show("Please select an Order Type (Dine In / Take Out).", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -144,6 +148,7 @@ namespace WingBiteFinalProject
             dgvCurrentOrder.ClearSelection();
             dgvCurrentOrder.CurrentCell = null;
         }
+
         private void btnRemoveItem_Click(object sender, EventArgs e)
         {
             if (dgvCurrentOrder.CurrentRow != null && dgvCurrentOrder.SelectedRows.Count > 0 && !dgvCurrentOrder.CurrentRow.IsNewRow)
@@ -183,22 +188,27 @@ namespace WingBiteFinalProject
                 MessageBox.Show("Please select an item from Current Order to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
         private void rbWings_CheckedChanged_1(object sender, EventArgs e)
         {
             if (rbWings.Checked) LoadMenuItems("Wings");
         }
+
         private void rbRicePlatter_CheckedChanged_1(object sender, EventArgs e)
         {
             if (rbRicePlatter.Checked) LoadMenuItems("Rice Platter");
         }
+
         private void rbDrinks_CheckedChanged_1(object sender, EventArgs e)
         {
             if (rbDrinks.Checked) LoadMenuItems("Drinks");
         }
+
         private void rbAll_CheckedChanged_1(object sender, EventArgs e)
         {
             if (rbAll.Checked) LoadMenuItems("All");
         }
+
         private void btnBack_Click_1(object sender, EventArgs e)
         {
             Main_Page main = new Main_Page();
@@ -212,31 +222,24 @@ namespace WingBiteFinalProject
                 MessageBox.Show("The order list is empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (cmbOrderType.SelectedItem == null)
             {
                 MessageBox.Show("Please select an Order Type before checking out.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             double currentSubtotal = Convert.ToDouble(lblSubtotal.Text);
             string selectedOrderType = cmbOrderType.SelectedItem.ToString();
             int generatedOrderID = 0;
-
-            // Gumamit ng hiwalay at localized connection para siguradong sarado ito pagkatapos ng block
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = @"INSERT INTO ordersTBL (orderType, paymentMethod) VALUES (@orderType, 'Pending');
-                         SELECT SCOPE_IDENTITY();";
-
+                                 SELECT SCOPE_IDENTITY();";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@orderType", selectedOrderType);
-
                     try
                     {
                         conn.Open();
-                        // Dito natin nakukuha ang auto-incremented ID mula sa SQL (e.g., 1001)
                         generatedOrderID = Convert.ToInt32(cmd.ExecuteScalar());
                     }
                     catch (Exception ex)
@@ -245,19 +248,15 @@ namespace WingBiteFinalProject
                         return;
                     }
                 }
-            } // Garantisadong sarado ang koneksyon dito, kaya iwas sa "connection was not closed" error
-
-            // IPINAPASA ANG GENERATED ID: Dito natin ipapasa ang numero sa PaymentForm
+            }
             PaymentForm payment = new PaymentForm(currentSubtotal, selectedOrderType, generatedOrderID);
-
             if (payment.ShowDialog() == DialogResult.OK)
             {
+                dgvCurrentOrder.Rows.Clear();
                 lblSubtotal.Text = "0.00";
                 cmbOrderType.SelectedIndex = -1;
             }
         }
-            
-        
         private void dgvMenuItems_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dgvMenuItems.Rows[e.RowIndex].Cells["productName"].Value != null)
@@ -276,11 +275,60 @@ namespace WingBiteFinalProject
                 txtQuantity.Focus();
             }
         }
-
         private void Sales_Order_Module_Load(object sender, EventArgs e)
         {
-           
+        }
+
+        private void btnClearOrder_Click(object sender, EventArgs e)
+        {
+            if (dgvCurrentOrder.CurrentRow != null && dgvCurrentOrder.SelectedRows.Count > 0 && !dgvCurrentOrder.CurrentRow.IsNewRow)
+            {
+                string prodName = dgvCurrentOrder.CurrentRow.Cells["ProductName"].Value.ToString();
+                int qtyToReturn = Convert.ToInt32(dgvCurrentOrder.CurrentRow.Cells["Quantity"].Value);
+                double itemTotal = Convert.ToDouble(dgvCurrentOrder.CurrentRow.Cells["Total"].Value);
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string returnStockQuery = "UPDATE productsTBL SET currentstock = currentstock + @Qty WHERE productName = @ProductName";
+                    using (SqlCommand cmd = new SqlCommand(returnStockQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Qty", qtyToReturn);
+                        cmd.Parameters.AddWithValue("@ProductName", prodName);
+                        try
+                        {
+                            conn.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error restoring stock: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+                dgvCurrentOrder.Rows.Remove(dgvCurrentOrder.CurrentRow);
+                if (rbAll.Checked) LoadMenuItems("All");
+                else if (rbWings.Checked) LoadMenuItems("Wings");
+                else if (rbRicePlatter.Checked) LoadMenuItems("Rice Platter");
+                else if (rbDrinks.Checked) LoadMenuItems("Drinks");
+
+                double currentSubtotal = Convert.ToDouble(lblSubtotal.Text);
+                double newSubtotal = currentSubtotal - itemTotal;
+                lblSubtotal.Text = newSubtotal.ToString("N2");
+
+                dgvCurrentOrder.ClearSelection();
+                dgvCurrentOrder.CurrentCell = null;
+            }
+            else
+            {
+                MessageBox.Show("Please select an item from Current Order to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
         }
     }
 }
+       
+                
+              
+
+        
+    

@@ -235,7 +235,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
-            this.ClientSize = new System.Drawing.Size(1200, 846);
+            this.ClientSize = new System.Drawing.Size(1200, 884);
             this.Controls.Add(this.lblChange);
             this.Controls.Add(this.lblChangeResult);
             this.Controls.Add(this.lblPaymentMethod);

@@ -246,14 +246,14 @@
             this.btnClearOrder.BackColor = System.Drawing.Color.OrangeRed;
             this.btnClearOrder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearOrder.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClearOrder.Location = new System.Drawing.Point(477, 915);
+            this.btnClearOrder.Location = new System.Drawing.Point(478, 915);
             this.btnClearOrder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClearOrder.Name = "btnClearOrder";
             this.btnClearOrder.Size = new System.Drawing.Size(237, 48);
             this.btnClearOrder.TabIndex = 50;
             this.btnClearOrder.Text = "CLEAR ORDER";
             this.btnClearOrder.UseVisualStyleBackColor = false;
-
+            this.btnClearOrder.Click += new System.EventHandler(this.btnClearOrder_Click);
             // 
             // btnRemoveItem
             // 

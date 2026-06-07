@@ -8,6 +8,7 @@ namespace WingBiteFinalProject
 {
     internal class TransactionRecord
     {
+        
         public string OrderNumber { get; set; }
 
         public decimal TotalAmount { get; set; }

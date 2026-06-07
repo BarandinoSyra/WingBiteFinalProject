@@ -4,9 +4,10 @@ using System.Windows.Forms;
 
 namespace WingBiteFinalProject
 {
+    // Tiyakin na ang class name ay tugma sa Form partial class architecture mo (Transaction_Record)
     public partial class Transaction_Record : Form
     {
-        private readonly string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        private readonly string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private readonly string orderNumber;
         private readonly string orderType;
         private readonly decimal totalAmount;
@@ -15,6 +16,7 @@ namespace WingBiteFinalProject
         private readonly string change;
         private readonly decimal discountDeduct;
 
+        // Inayos ang constructor signature para maging selyado ang pagtanggap ng 6 na parameters mula sa Payment form
         public Transaction_Record(string orderNumber, string orderType, decimal totalAmount, decimal finalTotal, string paymentMethod, string change)
         {
             InitializeComponent();
@@ -25,6 +27,8 @@ namespace WingBiteFinalProject
             this.finalTotal = finalTotal;
             this.paymentMethod = paymentMethod;
             this.change = change;
+
+            // Awtomatikong kukuwentahin ang ibinawas na diskwento
             this.discountDeduct = totalAmount - finalTotal;
         }
 
@@ -68,10 +72,11 @@ namespace WingBiteFinalProject
 
         private void SaveTransactionToDatabase()
         {
+            // Inayos ang query para TUGMA LAMANG sa mga totoong kolum ng iyong transactionTBL
             string query = @"INSERT INTO transactionTBL 
-                            (orderID, orderType, TotalAmount, Discount, FinalTotal, PaymentMethod, TransactionDate) 
-                            VALUES 
-                            (@OrderNumber, @OrderType, @TotalAmount, @DiscountDeduct, @FinalTotal, @PaymentMethod, @TransactionDate)";
+                    (OrderID, PaymentMethod, totalAmount, change) 
+                    VALUES 
+                    (@OrderNumber, @PaymentMethod, @TotalAmount, @Change)";
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -80,15 +85,19 @@ namespace WingBiteFinalProject
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@OrderNumber", orderNumber);
-                        cmd.Parameters.AddWithValue("@OrderType", orderType);
-                        cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
-                        cmd.Parameters.AddWithValue("@DiscountDeduct", discountDeduct);
-                        cmd.Parameters.AddWithValue("@FinalTotal", finalTotal);
+                        // Siguraduhing malinis ang data conversion bago i-save
+                        cmd.Parameters.AddWithValue("@OrderNumber", Convert.ToInt32(orderNumber));
                         cmd.Parameters.AddWithValue("@PaymentMethod", paymentMethod);
-                        cmd.Parameters.AddWithValue("@TransactionDate", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@TotalAmount", finalTotal); // Kung magkano ang totoong ibinayad matapos ang discount
 
-                        cmd.ExecuteNonQuery();
+                        // Linisin ang "₱" sign o spaces kung meron man sa string ng change bago i-save bilang decimal/float
+                        string cleanChange = change.Replace("₱", "").Trim();
+                        decimal changeDecimal = 0;
+                        decimal.TryParse(cleanChange, out changeDecimal);
+
+                        cmd.Parameters.AddWithValue("@Change", changeDecimal);
+
+                        cmd.ExecuteNonQuery(); // MAPAYAPA NA ITONG PAPASOK NGAYON!
                     }
                 }
                 catch (Exception ex)
@@ -109,10 +118,8 @@ namespace WingBiteFinalProject
         {
             Application.Exit();
         }
-
         private void dgvOrderSummary_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
     }
 }
