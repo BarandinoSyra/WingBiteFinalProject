@@ -285,6 +285,7 @@
             this.btnBack.TabIndex = 56;
             this.btnBack.Text = "BACK";
             this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click_1);
             // 
             // PaymentForm
             // 

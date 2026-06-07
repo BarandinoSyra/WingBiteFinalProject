@@ -23,9 +23,12 @@ namespace WingBiteFinalProject
         public PaymentForm(double subtotal, string typeOfOrder, int orderID)
         {
             InitializeComponent();
+
+            // SAFE GUARD: Fallback to "Dine-In" if null or empty to prevent database constraints from throwing exceptions
+            this.orderType = string.IsNullOrWhiteSpace(typeOfOrder) ? "Dine-In" : typeOfOrder;
+
             this.originalTotal = subtotal;
             this.finalTotal = subtotal;
-            this.orderType = typeOfOrder;
             this.currentOrderID = orderID;
         }
 
@@ -35,13 +38,14 @@ namespace WingBiteFinalProject
             lblOrderNumResult.Visible = true;
             lblTotalAmountResult.Text = originalTotal.ToString("N2");
             lblFinalTotalResult.Text = originalTotal.ToString("N2");
+
             cmbPaymentMethod.Items.Clear();
             cmbPaymentMethod.Items.Add("Cash");
             cmbPaymentMethod.Items.Add("Gcash");
             cmbPaymentMethod.SelectedIndex = 0;
         }
 
-        private void btnEnter_Click(object sender, EventArgs e) 
+        private void btnEnter_Click(object sender, EventArgs e)
         {
             if (!double.TryParse(txtAmountTendered.Text, out double amountTendered) || amountTendered < 0)
             {
@@ -65,7 +69,7 @@ namespace WingBiteFinalProject
             {
                 double discountDeduct = originalTotal * DiscountRate;
                 finalTotal = originalTotal - discountDeduct;
-            } 
+            }
             else
             {
                 finalTotal = originalTotal;
@@ -83,54 +87,63 @@ namespace WingBiteFinalProject
             }
 
             string method = cmbPaymentMethod.SelectedItem.ToString();
-            string computedChange = lblChangeResult.Text; // Kunin ang calculated change string para ipasa sa kasunod na form
+            string computedChange = lblChangeResult.Text;
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 try
                 {
                     conn.Open();
-                    string updateOrderQuery = "UPDATE ordersTBL SET paymentMethod = @paymentMethod WHERE OrderID = @orderID";
-                    using (SqlCommand cmdOrder = new SqlCommand(updateOrderQuery, conn))
+
+                    // 1. Inserts the order metadata into ordersTBL and grabs the runtime Primary Key via SCOPE_IDENTITY()
+                    string query = "INSERT INTO ordersTBL (TimePlaced, paymentMethod, orderstatus, orderType) VALUES (@TimePlaced, @paymentMethod, @orderstatus, @orderType); SELECT SCOPE_IDENTITY();";
+                    int generatedOrderID = 0;
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmdOrder.Parameters.AddWithValue("@paymentMethod", method);
-                        cmdOrder.Parameters.AddWithValue("@orderID", this.currentOrderID);
-                        cmdOrder.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("@TimePlaced", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@paymentMethod", method);
+                        cmd.Parameters.AddWithValue("@orderstatus", "Pending");
+                        cmd.Parameters.AddWithValue("@orderType", this.orderType);
+
+                        generatedOrderID = Convert.ToInt32(cmd.ExecuteScalar());
+                        this.currentOrderID = generatedOrderID;
                     }
 
+                    // 2. Inserts workflow ticket into KitchenTBL using generatedOrderID explicitly as both KitchenID and OrderID.
+                    // This dynamically handles your PK and NOT NULL database structural layout without changing the database.
                     string insertKitchenQuery = "INSERT INTO KitchenTBL (KitchenID, OrderID, Dispatch) VALUES (@kitchenID, @orderID, @dispatch)";
                     using (SqlCommand cmdKitchen = new SqlCommand(insertKitchenQuery, conn))
                     {
-                        cmdKitchen.Parameters.AddWithValue("@kitchenID", this.currentOrderID);
-                        cmdKitchen.Parameters.AddWithValue("@orderID", this.currentOrderID);
+                        cmdKitchen.Parameters.AddWithValue("@kitchenID", generatedOrderID);
+                        cmdKitchen.Parameters.AddWithValue("@orderID", generatedOrderID);
                         cmdKitchen.Parameters.AddWithValue("@dispatch", "Pending");
                         cmdKitchen.ExecuteNonQuery();
                     }
 
                     MessageBox.Show($"Payment successful via {method}! Order #{this.currentOrderID} has been sent to the Kitchen.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Itakda ang resulta bago maglipat ng form
                     this.DialogResult = DialogResult.OK;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("An error occurred while saving the transaction:\n\n" + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return; // Huwag magpatuloy sa Transaction Record kung nagkaroon ng error sa database
+                    return;
                 }
             }
 
-            // TUGMAAN NG PARAMETERS:
-            // Ang constructor mo ay naghahanap ng: string orderNumber, string orderType, decimal totalAmount, decimal finalTotal, string paymentMethod, string change
+            // 3. Spawns and shows the standard invoice or digital transactional receipt overview
             Transaction_Record receipt = new Transaction_Record(
-                this.currentOrderID.ToString(), // orderNumber (convert to string kung int ang currentOrderID mo)
-                this.orderType,                 // orderType
-                Convert.ToDecimal(this.originalTotal), // totalAmount
-                Convert.ToDecimal(this.finalTotal),    // finalTotal
-                method,                         // paymentMethod
-                computedChange                  // change
+                this.currentOrderID.ToString(),
+                this.orderType,
+                Convert.ToDecimal(this.originalTotal),
+                Convert.ToDecimal(this.finalTotal),
+                method,
+                computedChange
             );
-            receipt.Show(); // Ipakita ang transaction record form
-            this.Hide();    // Itago lamang ang kasalukuyang billing/payment form imbis na i-Close agad para iwas crash
+            receipt.Show();
+
+            // 4. Hides the payment process form cleanly out of view without forcing another window to launch
+            this.Hide();
         }
 
         private void btnCancelPay_Click(object sender, EventArgs e)
@@ -155,6 +168,12 @@ namespace WingBiteFinalProject
 
         private void cmbPaymentMethod_SelectedIndexChanged(object sender, EventArgs e)
         {
+        }
+
+        private void btnBack_Click_1(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

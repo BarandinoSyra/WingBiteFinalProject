@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data; 
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
- 
+
 namespace WingBiteFinalProject
 {
     public partial class Kitchen_Queue_Display : Form
@@ -32,12 +32,11 @@ namespace WingBiteFinalProject
         {
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                // BAGONG DAGDAG: Nilagyan natin ng explicit "o.OrderID AS [OrderID]" para siguradong 'OrderID' ang pangalan ng kolum sa DataTable
                 string query = @"SELECT k.KitchenID, o.OrderID AS [OrderID], o.TimePlaced, o.orderType, o.orderstatus
                                  FROM KitchenTBL k
                                  JOIN ordersTBL o ON k.OrderID = o.OrderID
                                  WHERE o.orderstatus = @status
-                                 ORDER BY o.TimePlaced ASC";
+                                 ORDER BY o.OrderID DESC";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 da.SelectCommand.Parameters.AddWithValue("@status", status);
@@ -60,7 +59,7 @@ namespace WingBiteFinalProject
         {
             if (sourceDgv.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select an order first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an order from the list first.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -68,13 +67,16 @@ namespace WingBiteFinalProject
 
             if (orderID == 0)
             {
-                MessageBox.Show("Could not retrieve Order ID from selected row.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not retrieve a valid Order ID from the selected row.", "Processing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = "UPDATE ordersTBL SET orderstatus = @status WHERE OrderID = @orderID";
+                // Dito mo ilalagay ang pinagsamang update query para mag-sync ang dalawang table
+                string query = @"UPDATE ordersTBL SET orderstatus = @status WHERE OrderID = @orderID;
+                         UPDATE KitchenTBL SET Dispatch = @status WHERE OrderID = @orderID;";
+
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@status", newStatus);
                 cmd.Parameters.AddWithValue("@orderID", orderID);
@@ -83,29 +85,26 @@ namespace WingBiteFinalProject
                 {
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show($"Order marked as {newStatus}.", "Updated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Order #{orderID} status successfully updated to '{newStatus}'.", "Status Updated", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error updating status: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("An error occurred while updating the database status: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
             LoadAllQueues();
         }
 
-        // BAGONG METHOD: Isang safe na paraan para makuha ang OrderID kahit manu-mano o auto-generated ang column definitions mo
         private int GetSelectedOrderID(DataGridView dgv)
         {
             if (dgv.CurrentRow == null) return 0;
 
-            // Subukan muna kunin gamit ang pangalan ng Column
             if (dgv.Columns.Contains("OrderID"))
             {
                 return Convert.ToInt32(dgv.CurrentRow.Cells["OrderID"].Value);
             }
 
-            // Kung ayaw pa rin sa pangalan, kukunin natin gamit ang pangalawang column (Index 1) dahil sa query natin, pangalawa ang o.OrderID
             return Convert.ToInt32(dgv.CurrentRow.Cells[1].Value);
         }
 
@@ -123,7 +122,6 @@ namespace WingBiteFinalProject
         {
             int selectedOrderID = 0;
 
-            // 1. Tinitingnan kung saan may aktibong focus/pinili ang user gamit ang bagong safe method natin
             if (dgvPendingOrders.CurrentRow != null && dgvPendingOrders.ContainsFocus)
             {
                 selectedOrderID = GetSelectedOrderID(dgvPendingOrders);
@@ -138,7 +136,6 @@ namespace WingBiteFinalProject
             }
             else
             {
-                // Fallback kung nawala ang focus sa grid habang kini-click ang button
                 if (dgvPendingOrders.CurrentRow != null)
                     selectedOrderID = GetSelectedOrderID(dgvPendingOrders);
                 else if (dgvPreparingOrders.CurrentRow != null)
@@ -147,7 +144,6 @@ namespace WingBiteFinalProject
                     selectedOrderID = GetSelectedOrderID(dgvReadyToServe);
             }
 
-            // 2. Pag sigurado nang may ID, ipapasa na natin ito sa Order Dispatch form
             if (selectedOrderID > 0)
             {
                 Order_status_or_order_dispatch dispatchForm = new Order_status_or_order_dispatch(selectedOrderID);
@@ -156,8 +152,7 @@ namespace WingBiteFinalProject
             }
             else
             {
-                MessageBox.Show("Please click on a row containing an order number first before viewing details.",
-                                "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please click on a valid row containing an order record before viewing details.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

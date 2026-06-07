@@ -215,6 +215,7 @@ namespace WingBiteFinalProject
             main.Show();
             this.Hide();
         }
+
         private void btnCheckout_Click_1(object sender, EventArgs e)
         {
             if (dgvCurrentOrder.Rows.Count == 0)
@@ -227,7 +228,16 @@ namespace WingBiteFinalProject
                 MessageBox.Show("Please select an Order Type before checking out.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            double currentSubtotal = Convert.ToDouble(lblSubtotal.Text);
+
+            // INAYOS DITO: Kinuha ang string value ng lblSubtotal, tinanggal ang peso sign o spaces para hindi mag-crash
+            string cleanSubtotalText = lblSubtotal.Text.Replace("₱", "").Replace("PHP", "").Replace(" ", "").Trim();
+
+            // Gumamit ng double.TryParse para kung may error man sa format, gagawin lang itong 0.00 imbis na mag-crash ang buong runtime
+            if (!double.TryParse(cleanSubtotalText, out double currentSubtotal))
+            {
+                currentSubtotal = 0.00;
+            }
+
             string selectedOrderType = cmbOrderType.SelectedItem.ToString();
             int generatedOrderID = 0;
             using (SqlConnection conn = new SqlConnection(connString))
@@ -257,6 +267,7 @@ namespace WingBiteFinalProject
                 cmbOrderType.SelectedIndex = -1;
             }
         }
+
         private void dgvMenuItems_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dgvMenuItems.Rows[e.RowIndex].Cells["productName"].Value != null)
@@ -266,6 +277,7 @@ namespace WingBiteFinalProject
                 txtQuantity.Focus();
             }
         }
+
         private void dgvCurrentOrder_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dgvMenuItems.Rows[e.RowIndex].Cells["productName"].Value != null)
@@ -275,6 +287,7 @@ namespace WingBiteFinalProject
                 txtQuantity.Focus();
             }
         }
+
         private void Sales_Order_Module_Load(object sender, EventArgs e)
         {
         }
@@ -322,13 +335,6 @@ namespace WingBiteFinalProject
             {
                 MessageBox.Show("Please select an item from Current Order to remove.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
     }
 }
-       
-                
-              
-
-        
-    
