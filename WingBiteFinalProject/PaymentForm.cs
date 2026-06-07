@@ -41,7 +41,7 @@ namespace WingBiteFinalProject
             cmbPaymentMethod.SelectedIndex = 0;
         }
 
-        private void btnEnter_Click(object sender, EventArgs e)
+        private void btnEnter_Click(object sender, EventArgs e) 
         {
             if (!double.TryParse(txtAmountTendered.Text, out double amountTendered) || amountTendered < 0)
             {
