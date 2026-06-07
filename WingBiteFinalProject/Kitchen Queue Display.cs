@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-
+ 
 namespace WingBiteFinalProject
 {
     public partial class Kitchen_Queue_Display : Form
