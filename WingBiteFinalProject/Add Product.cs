@@ -18,7 +18,7 @@ namespace WingBiteFinalProject
         {
             InitializeComponent();
         }
-        string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private Menu_or_Product_Module _mainForm;
 
         // Baguhin ang Constructor para tanggapin ang Main Form reference
@@ -58,78 +58,142 @@ namespace WingBiteFinalProject
 
         private void Add_Product_Load(object sender, EventArgs e)
         {
-
+           
         }
 
         private void btnSubmit_Click_1(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtProductName.Text.Trim()) ||
-         cmbCategory.SelectedItem == null ||
-         string.IsNullOrEmpty(txtUnit.Text.Trim()) ||
-         string.IsNullOrEmpty(txtPrice.Text.Trim()) ||
-         string.IsNullOrEmpty(txtInventoryID.Text.Trim()))
+            if (string.IsNullOrEmpty(txtProductName.Text.Trim()) || cmbCategory.SelectedItem == null || string.IsNullOrEmpty(txtUnit.Text.Trim()) || string.IsNullOrEmpty(txtPrice.Text.Trim()) || string.IsNullOrEmpty(txtInventoryID.Text.Trim()))
             {
-                MessageBox.Show("Please fill out all fields before submitting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please fill out all fields.");
                 return;
             }
 
-            // 2. Make sure it is actually a valid integer
             if (!int.TryParse(txtInventoryID.Text.Trim(), out int inventoryID))
             {
-                MessageBox.Show("Inventory ID must be a valid number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Invalid Inventory ID.");
                 return;
             }
 
-            // 3. Database check: Does this Inventory ID actually exist?
-            if (!DoesInventoryIDExist(inventoryID))
-            {
-                MessageBox.Show($"The Inventory ID '{inventoryID}' does not exist in the system. Please verify the ID or create the inventory item first.",
-                                "Foreign Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            DialogResult result = MessageBox.Show("Do you want to save this new product?", "Confirm Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            int qtyToDeduct = int.Parse(txtUnit.Text.Trim());
+            string selectedCategory = cmbCategory.SelectedItem.ToString();
 
-            if (result == DialogResult.Yes)
+            using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = "INSERT INTO productsTBL (InventoryID, ProductName, category, currentstock, price) VALUES (@InventoryID, @Name, @Category, @Stock, @Price)";
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
 
-                using (SqlConnection conn = new SqlConnection(connString))
+                try
                 {
-                    try
+                    string checkQuery = "SELECT currentstock, category FROM inventoryTBL WHERE inventoryID = @ID";
+                    SqlCommand cmdCheck = new SqlCommand(checkQuery, conn, transaction);
+                    cmdCheck.Parameters.AddWithValue("@ID", inventoryID);
+
+                    using (SqlDataReader reader = cmdCheck.ExecuteReader())
                     {
-                        conn.Open();
-                        SqlCommand cmd = new SqlCommand(query, conn);
-                        cmd.Parameters.AddWithValue("@Name", txtProductName.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Category", cmbCategory.SelectedItem.ToString());
-                        cmd.Parameters.AddWithValue("@Stock", Convert.ToInt32(txtUnit.Text.Trim()));
-                        cmd.Parameters.AddWithValue("@Price", Convert.ToDecimal(txtPrice.Text.Trim()));
-                        cmd.Parameters.AddWithValue("@InventoryID", inventoryID); // Used parsed int variable
-
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Product added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        // Safely refresh and handle window state
-                        if (_mainForm != null)
+                        if (!reader.Read())
                         {
-                            _mainForm.LoadAllProducts();
+                            MessageBox.Show("Inventory ID does not exist.");
+                            reader.Close();
+                            transaction.Rollback();
+                            return;
+                        }
+
+                        int currentStock = Convert.ToInt32(reader["currentstock"]);
+                        string invCategory = reader["category"].ToString();
+                        reader.Close();
+
+                        if (invCategory != selectedCategory)
+                        {
+                            MessageBox.Show("Category mismatch.");
+                            transaction.Rollback();
+                            return;
+                        }
+                        if (currentStock < qtyToDeduct)
+                        {
+                            MessageBox.Show("Insufficient stock.");
+                            transaction.Rollback();
+                            return;
                         }
                     }
-                    catch (Exception ex)
+
+                    string checkDup = "SELECT COUNT(1) FROM productsTBL WHERE InventoryID = @ID";
+                    SqlCommand cmdDup = new SqlCommand(checkDup, conn, transaction);
+                    cmdDup.Parameters.AddWithValue("@ID", inventoryID);
+                    if (Convert.ToInt32(cmdDup.ExecuteScalar()) > 0)
                     {
-                        MessageBox.Show("Error saving product: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Inventory ID already exists.");
+                        transaction.Rollback();
+                        return;
                     }
+
+                    string checkNameQuery = "SELECT COUNT(1) FROM productsTBL WHERE LOWER(ProductName) = @Name";
+                    SqlCommand cmdCheckName = new SqlCommand(checkNameQuery, conn, transaction);
+                    cmdCheckName.Parameters.AddWithValue("@Name", txtProductName.Text.Trim().ToLower());
+                    if (Convert.ToInt32(cmdCheckName.ExecuteScalar()) > 0)
+                    {
+                        MessageBox.Show("Product name already exists.");
+                        transaction.Rollback();
+                        return;
+                    }
+
+                    string updateInv = "UPDATE inventoryTBL SET currentstock = currentstock - @Qty WHERE inventoryID = @ID";
+                    SqlCommand cmdUpd = new SqlCommand(updateInv, conn, transaction);
+                    cmdUpd.Parameters.AddWithValue("@Qty", qtyToDeduct);
+                    cmdUpd.Parameters.AddWithValue("@ID", inventoryID);
+                    cmdUpd.ExecuteNonQuery();
+
+                    string insertQuery = "INSERT INTO productsTBL (InventoryID, ProductName, category, currentstock, price) VALUES (@ID, @Name, @Cat, @Qty, @Price)";
+                    SqlCommand cmdInsert = new SqlCommand(insertQuery, conn, transaction);
+                    cmdInsert.Parameters.AddWithValue("@ID", inventoryID);
+                    cmdInsert.Parameters.AddWithValue("@Name", txtProductName.Text.Trim());
+                    cmdInsert.Parameters.AddWithValue("@Cat", selectedCategory);
+                    cmdInsert.Parameters.AddWithValue("@Qty", qtyToDeduct);
+                    cmdInsert.Parameters.AddWithValue("@Price", decimal.Parse(txtPrice.Text.Trim()));
+                    cmdInsert.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    MessageBox.Show("Product added successfully.");
+
+                    txtInventoryID.Clear();
+                    txtProductName.Clear();
+                    txtUnit.Clear();
+                    txtPrice.Clear();
+                    cmbCategory.SelectedIndex = -1;
+                    txtInventoryID.Focus();
+
+                    if (_mainForm != null) _mainForm.LoadAllProducts();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Error: " + ex.Message);
                 }
             }
         }
-
-        private void picboxMenuProductManagement_Click(object sender, EventArgs e)
+      
+        private void txtInventoryID_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void lblMenuProductManagement_Click(object sender, EventArgs e)
+        private void Add_Product_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Pinipigilan ang "ding" sound ng Windows kapag nag-eenter
+                e.SuppressKeyPress = true;
 
+                // Inililipat ang focus sa susunod na control
+                this.SelectNextControl(this.ActiveControl, true, true, true, true);
+            }
         }
     }
 }
+        
+            
+        
+
+       
+    
+

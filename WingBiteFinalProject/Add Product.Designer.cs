@@ -58,7 +58,7 @@
             this.cmbCategory.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmbCategory.Name = "cmbCategory";
             this.cmbCategory.Size = new System.Drawing.Size(290, 33);
-            this.cmbCategory.TabIndex = 61;
+            this.cmbCategory.TabIndex = 2;
             // 
             // btnSubmit
             // 
@@ -70,7 +70,7 @@
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(144, 54);
-            this.btnSubmit.TabIndex = 60;
+            this.btnSubmit.TabIndex = 5;
             this.btnSubmit.Text = "SUBMIT";
             this.btnSubmit.UseVisualStyleBackColor = false;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click_1);
@@ -97,7 +97,7 @@
             this.txtPrice.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtPrice.Name = "txtPrice";
             this.txtPrice.Size = new System.Drawing.Size(290, 37);
-            this.txtPrice.TabIndex = 58;
+            this.txtPrice.TabIndex = 4;
             // 
             // txtUnit
             // 
@@ -106,7 +106,7 @@
             this.txtUnit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtUnit.Name = "txtUnit";
             this.txtUnit.Size = new System.Drawing.Size(290, 37);
-            this.txtUnit.TabIndex = 57;
+            this.txtUnit.TabIndex = 3;
             // 
             // txtProductName
             // 
@@ -115,7 +115,7 @@
             this.txtProductName.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtProductName.Name = "txtProductName";
             this.txtProductName.Size = new System.Drawing.Size(290, 37);
-            this.txtProductName.TabIndex = 56;
+            this.txtProductName.TabIndex = 1;
             // 
             // lblPrice
             // 
@@ -180,7 +180,6 @@
             this.lblMenuProductManagement.Size = new System.Drawing.Size(569, 46);
             this.lblMenuProductManagement.TabIndex = 49;
             this.lblMenuProductManagement.Text = "MENU/PRODUCT MANAGEMENT";
-            this.lblMenuProductManagement.Click += new System.EventHandler(this.lblMenuProductManagement_Click);
             // 
             // picboxMenuProductManagement
             // 
@@ -192,7 +191,6 @@
             this.picboxMenuProductManagement.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picboxMenuProductManagement.TabIndex = 50;
             this.picboxMenuProductManagement.TabStop = false;
-            this.picboxMenuProductManagement.Click += new System.EventHandler(this.picboxMenuProductManagement_Click);
             // 
             // txtInventoryID
             // 
@@ -201,7 +199,8 @@
             this.txtInventoryID.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtInventoryID.Name = "txtInventoryID";
             this.txtInventoryID.Size = new System.Drawing.Size(290, 37);
-            this.txtInventoryID.TabIndex = 63;
+            this.txtInventoryID.TabIndex = 0;
+            this.txtInventoryID.TextChanged += new System.EventHandler(this.txtInventoryID_TextChanged);
             // 
             // label1
             // 
@@ -251,10 +250,12 @@
             this.Controls.Add(this.txtProductName);
             this.Controls.Add(this.txtUnit);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Add_Product";
             this.Text = "Add_Product";
             this.Load += new System.EventHandler(this.Add_Product_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Add_Product_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.picboxMenuProductManagement)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

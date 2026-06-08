@@ -178,7 +178,7 @@ namespace WingBiteFinalProject
             update.Show();
             this.Hide();
         }
-        
+
         private void btnDeleteProduct_Click(object sender, EventArgs e)
         {
             if (dgvProducts.SelectedRows.Count == 0)
@@ -186,48 +186,69 @@ namespace WingBiteFinalProject
                 MessageBox.Show("Please select a product.", "Delete Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            DialogResult result = MessageBox.Show("Are you sure you want to delete this product?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
+
+            DialogResult result = MessageBox.Show("Are you sure? The stock will be returned to inventory.", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No) return;
+
             int selectedID = Convert.ToInt32(dgvProducts.SelectedRows[0].Cells[0].Value);
 
-            string query = "DELETE FROM ProductsTBL WHERE productID = @ID";
-            try
+            using (SqlConnection conn = new SqlConnection(connString))
             {
-                using (SqlConnection conn = new SqlConnection(connString))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID", selectedID);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to delete from database: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
 
-            Product productToDelete = null;
-            foreach (Product product in ProductData.products)
-            {
-                if (product.ProductID == selectedID)
+                try
                 {
-                    productToDelete = product;
-                    break;
+                    // 1. Kunin ang InventoryID at stock ng product na dine-delete
+                    string getInfoQuery = "SELECT InventoryID, currentstock FROM ProductsTBL WHERE productID = @PID";
+                    SqlCommand cmdGet = new SqlCommand(getInfoQuery, conn, transaction);
+                    cmdGet.Parameters.AddWithValue("@PID", selectedID);
+
+                    int invID = 0;
+                    int stockToReturn = 0;
+
+                    using (SqlDataReader reader = cmdGet.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            invID = Convert.ToInt32(reader["InventoryID"]);
+                            stockToReturn = Convert.ToInt32(reader["currentstock"]);
+                        }
+                        reader.Close();
+                    }
+
+                    // 2. I-ADD pabalik ang stock sa Inventory
+                    string returnStockQuery = "UPDATE inventoryTBL SET currentstock = currentstock + @Qty WHERE inventoryID = @InvID";
+                    SqlCommand cmdReturn = new SqlCommand(returnStockQuery, conn, transaction);
+                    cmdReturn.Parameters.AddWithValue("@Qty", stockToReturn);
+                    cmdReturn.Parameters.AddWithValue("@InvID", invID);
+                    cmdReturn.ExecuteNonQuery();
+
+                    // 3. I-DELETE ang product
+                    string deleteQuery = "DELETE FROM ProductsTBL WHERE productID = @PID";
+                    SqlCommand cmdDel = new SqlCommand(deleteQuery, conn, transaction);
+                    cmdDel.Parameters.AddWithValue("@PID", selectedID);
+                    cmdDel.ExecuteNonQuery();
+
+                    transaction.Commit();
+
+                    // 4. Update local memory (ProductData)
+                    Product productToDelete = ProductData.products.FirstOrDefault(p => p.ProductID == selectedID);
+                    if (productToDelete != null)
+                    {
+                        ProductData.products.Remove(productToDelete);
+                        SystemData.Products.Remove(productToDelete);
+                    }
+
+                    LoadAllProducts();
+                    MessageBox.Show("Product deleted and stock returned successfully!");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Failed to delete: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            if (productToDelete != null)
-            {
-                ProductData.products.Remove(productToDelete);
-                SystemData.Products.Remove(productToDelete);
-            }
-            LoadAllProducts();
-            MessageBox.Show("Product deleted successfully!", "Delete Product", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnBack_Click(object sender, EventArgs e)
