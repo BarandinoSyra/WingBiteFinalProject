@@ -44,6 +44,7 @@
             this.txtStock = new System.Windows.Forms.TextBox();
             this.lblInventoryID = new System.Windows.Forms.Label();
             this.lblCategory = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picboxMenuProductManagement)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvarchive)).BeginInit();
             this.panelDisplay.SuspendLayout();
@@ -154,6 +155,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(237)))), ((int)(((byte)(221)))));
+            this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btndisplay1);
             this.groupBox1.Controls.Add(this.label3);
@@ -185,7 +187,7 @@
             this.btndisplay1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.btndisplay1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btndisplay1.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btndisplay1.Location = new System.Drawing.Point(132, 187);
+            this.btndisplay1.Location = new System.Drawing.Point(33, 199);
             this.btndisplay1.Name = "btndisplay1";
             this.btndisplay1.Size = new System.Drawing.Size(154, 46);
             this.btndisplay1.TabIndex = 10;
@@ -242,6 +244,19 @@
             this.lblCategory.TabIndex = 7;
             this.lblCategory.Text = "label6";
             // 
+            // btnCancel
+            // 
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancel.Font = new System.Drawing.Font("Book Antiqua", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.Location = new System.Drawing.Point(224, 199);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(154, 46);
+            this.btnCancel.TabIndex = 11;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // Inventory_archive
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -286,5 +301,6 @@
         private System.Windows.Forms.TextBox txtStock;
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

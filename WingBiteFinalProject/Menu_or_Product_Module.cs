@@ -14,7 +14,7 @@ namespace WingBiteFinalProject
     public partial class Menu_or_Product_Module : Form
     {
        
-        private readonly string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        private readonly string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
 
         public Menu_or_Product_Module()
         {
@@ -35,7 +35,7 @@ namespace WingBiteFinalProject
             ProductData.products.Clear();
             SystemData.Products.Clear();
 
-            string query = "SELECT productID, productName, category, unit, price FROM ProductsTBL";
+            string query = "SELECT productID, productName, category, price,currentstock, ProductsSold FROM ProductsTBL";
             try
             {
                 using (SqlConnection conn = new SqlConnection(connString))
@@ -51,9 +51,9 @@ namespace WingBiteFinalProject
                                 product.ProductID = Convert.ToInt32(reader["productID"]);
                                 product.ProductName = reader["productName"].ToString();
                                 product.Category = reader["category"].ToString();
-                                product.Stock = Convert.ToInt32(reader["unit"]);
                                 product.Price = Convert.ToDecimal(reader["price"]);
-                                product.ProductsSold = 0;
+                                product.Stock = reader["currentstock"] == DBNull.Value ? 0 : Convert.ToInt32(reader["currentstock"]);
+                                product.ProductsSold = reader["ProductsSold"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ProductsSold"]);
 
                                 ProductData.products.Add(product);
                                 SystemData.Products.Add(product);
@@ -79,7 +79,7 @@ namespace WingBiteFinalProject
 
         private void SetupProductGrid()
         {
-            dgvProducts.DataSource = null; // Tinitiyak na walang nakatalang datasource upang maiwasan ang binding crash
+            dgvProducts.DataSource = null;
             dgvProducts.Columns.Clear();
             dgvProducts.AllowUserToAddRows = false;
             dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -88,7 +88,10 @@ namespace WingBiteFinalProject
             dgvProducts.Columns.Add("ProductName", "Product Name");
             dgvProducts.Columns.Add("Category", "Category");
             dgvProducts.Columns.Add("Price", "Price");
+            dgvProducts.Columns.Add("Stock", "Current Stock");
             dgvProducts.Columns.Add("ProductsSold", "Products Sold");
+            dgvProducts.Columns["Price"].DefaultCellStyle.Format = "C2";
+            dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         public void LoadAllProducts()
@@ -101,6 +104,7 @@ namespace WingBiteFinalProject
                     product.ProductName,
                     product.Category,
                     product.Price,
+                    product.Stock,
                     product.ProductsSold);
             }
         }
@@ -124,6 +128,7 @@ namespace WingBiteFinalProject
                         product.ProductName,
                         product.Category,
                         product.Price,
+                        product.Stock,
                         product.ProductsSold);
                     found = true;
                 }
@@ -154,6 +159,7 @@ namespace WingBiteFinalProject
                         product.ProductName,
                         product.Category,
                         product.Price,
+                        product.Stock,
                         product.ProductsSold);
                 }
             }
@@ -234,7 +240,8 @@ namespace WingBiteFinalProject
         private void button1_Click(object sender, EventArgs e)
         {
             dgvProducts.DataSource = null;
-            dgvProducts.DataSource = SystemData.Products;
+            SetupProductGrid();
+            LoadAllProducts();
         }
 
         private void dgvProducts_CellContentClick(object sender, DataGridViewCellEventArgs e)

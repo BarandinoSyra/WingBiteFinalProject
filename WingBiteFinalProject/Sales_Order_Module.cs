@@ -60,7 +60,7 @@ namespace WingBiteFinalProject
                         da.Fill(dt);
                         dgvMenuItems.DataSource = dt;
                         dgvMenuItems.Columns["productName"].HeaderText = "Product Name";
-                        dgvMenuItems.Columns["Price"].DefaultCellStyle.Format = "N2";
+                        dgvMenuItems.Columns["Price"].DefaultCellStyle.Format = "C2";
                         dgvMenuItems.Columns["currentstock"].HeaderText = "currentstock";
                         dgvMenuItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                         dgvMenuItems.ClearSelection();
@@ -84,7 +84,7 @@ namespace WingBiteFinalProject
                     subtotal += Convert.ToDouble(row.Cells["Total"].Value);
                 }
             }
-            lblSubtotal.Text = subtotal.ToString("N2");
+            lblSubtotal.Text = subtotal.ToString("C2");
         }
 
         private void btnAddToOrder_Click(object sender, EventArgs e)
@@ -229,10 +229,7 @@ namespace WingBiteFinalProject
                 return;
             }
 
-            // INAYOS DITO: Kinuha ang string value ng lblSubtotal, tinanggal ang peso sign o spaces para hindi mag-crash
             string cleanSubtotalText = lblSubtotal.Text.Replace("₱", "").Replace("PHP", "").Replace(" ", "").Trim();
-
-            // Gumamit ng double.TryParse para kung may error man sa format, gagawin lang itong 0.00 imbis na mag-crash ang buong runtime
             if (!double.TryParse(cleanSubtotalText, out double currentSubtotal))
             {
                 currentSubtotal = 0.00;
@@ -240,30 +237,55 @@ namespace WingBiteFinalProject
 
             string selectedOrderType = cmbOrderType.SelectedItem.ToString();
             int generatedOrderID = 0;
+
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = @"INSERT INTO ordersTBL (orderType, paymentMethod) VALUES (@orderType, 'Pending');
-                                 SELECT SCOPE_IDENTITY();";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@orderType", selectedOrderType);
-                    try
+                    conn.Open();
+
+                    // 1. I-loop ang DGV para i-update ang ProductsSold sa database
+                    foreach (DataGridViewRow row in dgvCurrentOrder.Rows)
                     {
-                        conn.Open();
+                        if (row.IsNewRow) continue;
+
+                        string prodName = row.Cells["ProductName"].Value.ToString();
+                        int qtySold = Convert.ToInt32(row.Cells["Quantity"].Value);
+
+                        // Update query para dagdagan ang ProductsSold
+                        string updateSoldQuery = "UPDATE productsTBL SET ProductsSold = ISNULL(ProductsSold, 0) + @Qty WHERE productName = @ProductName";
+
+                        using (SqlCommand cmdUpdate = new SqlCommand(updateSoldQuery, conn))
+                        {
+                            cmdUpdate.Parameters.AddWithValue("@Qty", qtySold);
+                            cmdUpdate.Parameters.AddWithValue("@ProductName", prodName);
+                            cmdUpdate.ExecuteNonQuery();
+                        }
+                    }
+
+                    // 2. I-insert ang order sa ordersTBL
+                    string query = @"INSERT INTO ordersTBL (orderType, paymentMethod) VALUES (@orderType, 'Pending');
+                             SELECT SCOPE_IDENTITY();";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@orderType", selectedOrderType);
                         generatedOrderID = Convert.ToInt32(cmd.ExecuteScalar());
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error generating Order Number:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error processing checkout:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
+
+            // 3. I-open ang Payment Form
             PaymentForm payment = new PaymentForm(currentSubtotal, selectedOrderType, generatedOrderID);
             if (payment.ShowDialog() == DialogResult.OK)
             {
                 dgvCurrentOrder.Rows.Clear();
-                lblSubtotal.Text = "0.00";
+                lblSubtotal.Text = "₱0.00";
                 cmbOrderType.SelectedIndex = -1;
             }
         }
@@ -326,7 +348,7 @@ namespace WingBiteFinalProject
 
                 double currentSubtotal = Convert.ToDouble(lblSubtotal.Text);
                 double newSubtotal = currentSubtotal - itemTotal;
-                lblSubtotal.Text = newSubtotal.ToString("N2");
+                lblSubtotal.Text = newSubtotal.ToString("C2");
 
                 dgvCurrentOrder.ClearSelection();
                 dgvCurrentOrder.CurrentCell = null;

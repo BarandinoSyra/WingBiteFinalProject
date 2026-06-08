@@ -13,7 +13,7 @@ namespace WingBiteFinalProject
 {
     public partial class Inventory_archive : Form
     {
-        string connString = "Server=YJAIXX_COLIE\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
+        string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private int selectedInventoryID = -1;
 
         public Inventory_archive()
@@ -228,6 +228,12 @@ namespace WingBiteFinalProject
             Inventory_Tracking tracking =new Inventory_Tracking();
             tracking.Show();
             this.Close();
+
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            panelDisplay.Hide();
 
         }
     }
