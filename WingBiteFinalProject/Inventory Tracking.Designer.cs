@@ -183,7 +183,6 @@
             this.dgvInventory.Size = new System.Drawing.Size(907, 215);
             this.dgvInventory.TabIndex = 55;
             this.dgvInventory.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInventory_CellContentClick);
-            this.dgvInventory.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvInventory_CellFormatting);
             // 
             // lblProductStock
             // 

@@ -158,6 +158,7 @@
             this.dgvPendingOrders.RowHeadersWidth = 51;
             this.dgvPendingOrders.Size = new System.Drawing.Size(413, 428);
             this.dgvPendingOrders.TabIndex = 41;
+            this.dgvPendingOrders.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPendingOrders_CellContentClick);
             // 
             // btnBack
             // 

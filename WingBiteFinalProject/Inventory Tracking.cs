@@ -8,12 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+
 namespace WingBiteFinalProject
 {
     public partial class Inventory_Tracking : Form
     {
         string connString = "Server=DESKTOP-JG0361V\\SQLEXPRESS;Database=WingBiteDB;Trusted_Connection=True;Encrypt=false";
         private int selectedInventoryID = -1;
+
         public Inventory_Tracking()
         {
             InitializeComponent();
@@ -22,10 +24,12 @@ namespace WingBiteFinalProject
             this.Load += new System.EventHandler(this.Inventory_Tracking_Load_1);
             this.dgvInventory.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvInventory_DataBindingComplete);
         }
+
         private void Inventory_Tracking_Load_1(object sender, EventArgs e)
         {
             LoadInventory();
         }
+
         public void LoadInventory()
         {
             using (SqlConnection conn = new SqlConnection(connString))
@@ -33,24 +37,27 @@ namespace WingBiteFinalProject
                 try
                 {
                     conn.Open();
+                    // In-update ang FORMAT ng 'Last Updated' para tumulad sa 'Date Received'
                     string query = @"SELECT 
-                             RIGHT('0000' + CAST(inventoryID AS VARCHAR), 4) AS [Inventory ID],
-                             category AS [Category], 
-                             currentstock AS [Stock], 
-                             CASE 
-                                 WHEN currentstock <= 0 THEN 'Out Of Stock'
-                                 WHEN currentstock <= 20 THEN 'Low Stock'
-                                 ELSE 'In Stock'
-                             END AS [Stock Status],
-                             FORMAT(dateReceived, 'MMMM dd, yyyy') AS [Date Received], 
-                             FORMAT(lastupdated, 'dd-MMM-yyyy hh:mm tt') AS [Last Updated],
-                             inventoryID
-                             FROM inventoryTBL
-                             WHERE isArchived = 0 OR isArchived IS NULL";
+                                     RIGHT('0000' + CAST(inventoryID AS VARCHAR), 4) AS [Inventory ID],
+                                     category AS [Category], 
+                                     currentstock AS [Stock], 
+                                     CASE 
+                                         WHEN currentstock <= 0 THEN 'Out Of Stock'
+                                         WHEN currentstock <= 10 THEN 'Low Stock'
+                                         ELSE 'In Stock'
+                                     END AS [Stock Status],
+                                     FORMAT(dateReceived, 'MMMM dd, yyyy') AS [Date Received], 
+                                     FORMAT(lastupdated, 'MMMM dd, yyyy') AS [Last Updated],
+                                     inventoryID
+                                     FROM inventoryTBL
+                                     WHERE isArchived = 0 OR isArchived IS NULL";
+
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
                     dgvInventory.DataSource = dt;
+
                     if (dgvInventory.Columns["inventoryID"] != null)
                     {
                         dgvInventory.Columns["inventoryID"].Visible = false;
@@ -60,7 +67,6 @@ namespace WingBiteFinalProject
                     selectedInventoryID = -1;
                     lblProductNameHere.Text = "Product Name here";
                     lblCurrentStockResult.Text = "Current Stock here";
-
                 }
                 catch (Exception ex)
                 {
@@ -68,22 +74,26 @@ namespace WingBiteFinalProject
                 }
             }
         }
+
         private void dgvInventory_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             dgvInventory.ClearSelection();
         }
+
         private void btnLowStockReport_Click(object sender, EventArgs e)
         {
             Show_Low_Stock_report lowStock = new Show_Low_Stock_report();
             lowStock.Show();
             this.Hide();
         }
+
         private void btnAddProduct_Click(object sender, EventArgs e)
         {
             Inventory_Add_Product addinvproduct = new Inventory_Add_Product();
             addinvproduct.Show();
             this.Hide();
         }
+
         private void dgvInventory_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
@@ -99,6 +109,7 @@ namespace WingBiteFinalProject
                 }
             }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (dgvInventory.DataSource is DataTable dt)
@@ -110,6 +121,7 @@ namespace WingBiteFinalProject
                 MessageBox.Show("No data available to filter. Please try refreshing the list.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void btnRefresh_Click_1(object sender, EventArgs e)
         {
             txtSearch.Clear();
@@ -118,6 +130,7 @@ namespace WingBiteFinalProject
                 dt.DefaultView.RowFilter = string.Empty;
             }
         }
+
         private void btnUpdateStock_Click(object sender, EventArgs e)
         {
             if (selectedInventoryID == -1)
@@ -160,9 +173,7 @@ namespace WingBiteFinalProject
                 }
             }
         }
-        private void dgvInventory_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-        }
+
         private void btnRefreshAll_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
@@ -170,6 +181,7 @@ namespace WingBiteFinalProject
             lblCurrentStockResult.Visible = false;
             lblProductNameHere.Visible = false;
         }
+
         private void btnremove_Click(object sender, EventArgs e)
         {
             if (selectedInventoryID == -1)
@@ -208,6 +220,7 @@ namespace WingBiteFinalProject
                 }
             }
         }
+
         private void btnArchive_Click(object sender, EventArgs e)
         {
             Inventory_archive archiveForm = new Inventory_archive();

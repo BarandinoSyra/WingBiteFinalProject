@@ -44,9 +44,11 @@
             this.dgvLowStockReport.Location = new System.Drawing.Point(90, 206);
             this.dgvLowStockReport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dgvLowStockReport.Name = "dgvLowStockReport";
+            this.dgvLowStockReport.RowHeadersVisible = false;
             this.dgvLowStockReport.RowHeadersWidth = 62;
             this.dgvLowStockReport.Size = new System.Drawing.Size(1020, 437);
             this.dgvLowStockReport.TabIndex = 50;
+            this.dgvLowStockReport.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLowStockReport_CellContentClick);
             // 
             // btnBack
             // 

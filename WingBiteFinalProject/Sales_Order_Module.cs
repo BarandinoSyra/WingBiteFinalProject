@@ -41,17 +41,24 @@ namespace WingBiteFinalProject
         {
             using (SqlConnection conn = new SqlConnection(connString))
             {
-                string query = "SELECT productName, Price, currentstock FROM productsTBL";
+                // Ginamit natin ang LEFT JOIN para ma-filter ang mga items na naka-archive
+                string query = @"SELECT p.productName, p.Price, p.currentstock 
+                         FROM productsTBL p
+                         LEFT JOIN inventoryTBL i ON p.InventoryID = i.inventoryID
+                         WHERE (i.isArchived = 0 OR i.isArchived IS NULL)";
+
                 if (category != "All")
                 {
-                    query += " WHERE Category = @Category";
+                    query += " AND p.Category = @Category";
                 }
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     if (category != "All")
                     {
                         cmd.Parameters.AddWithValue("@Category", category);
                     }
+
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     try
@@ -59,12 +66,12 @@ namespace WingBiteFinalProject
                         conn.Open();
                         da.Fill(dt);
                         dgvMenuItems.DataSource = dt;
+
+                        // I-set up ang headers at format
                         dgvMenuItems.Columns["productName"].HeaderText = "Product Name";
                         dgvMenuItems.Columns["Price"].DefaultCellStyle.Format = "C2";
-                        dgvMenuItems.Columns["currentstock"].HeaderText = "currentstock";
+                        dgvMenuItems.Columns["currentstock"].HeaderText = "Stock";
                         dgvMenuItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                        dgvMenuItems.ClearSelection();
-                        dgvMenuItems.CurrentCell = null;
                     }
                     catch (Exception ex)
                     {

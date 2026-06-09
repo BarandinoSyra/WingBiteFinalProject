@@ -63,7 +63,7 @@
             this.picboxWallpaper.Location = new System.Drawing.Point(4, 111);
             this.picboxWallpaper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.picboxWallpaper.Name = "picboxWallpaper";
-            this.picboxWallpaper.Size = new System.Drawing.Size(660, 643);
+            this.picboxWallpaper.Size = new System.Drawing.Size(660, 737);
             this.picboxWallpaper.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picboxWallpaper.TabIndex = 0;
             this.picboxWallpaper.TabStop = false;
@@ -216,6 +216,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "LoginForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.LoginForm_Load);
             this.panelWallpaper.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picboxWallpaper)).EndInit();

@@ -113,6 +113,26 @@ namespace WingBiteFinalProject
         }
         private void Main_Page_Load(object sender, EventArgs e)
         {
+            string ShowPendingOrdersQuery = @"SELECT o.OrderID, o.TimePlaced, o.orderType, o.orderstatus
+                                  FROM ordersTBL o
+                                  WHERE o.orderstatus = 'Pending'
+                                  ORDER BY o.OrderID DESC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                try
+                {
+                    conn.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(ShowPendingOrdersQuery, conn);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvRecentOrders.DataSource = dt;
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error fetching pending orders: " + ex.Message);
+                }
+            }
             if (!LoginForm.CurrentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
 
@@ -124,26 +144,27 @@ namespace WingBiteFinalProject
             LoadDailySummarySales();
 
         }
+       
 
         private void dgvRecentOrders_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            string query = "SELECT TOP 5 orderID, totalPrice, SaleDate FROM salesTBL ORDER BY SaleDate DESC";
-            using (SqlConnection conn = new SqlConnection(connString))
-            {
-                try
-                {
-                    conn.Open();
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    dgvRecentOrders.DataSource = dt;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error fetching recent orders: " + ex.Message);
-                }
+           
 
             }
+        
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel2_Click(object sender, EventArgs e)
+        {
+            Show_Low_Stock_report showLowStock = new Show_Low_Stock_report();
+           showLowStock.Show();
+            this.Hide();
+
+
         }
     }
     }

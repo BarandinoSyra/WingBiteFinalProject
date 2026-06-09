@@ -35,7 +35,12 @@ namespace WingBiteFinalProject
             ProductData.products.Clear();
             SystemData.Products.Clear();
 
-            string query = "SELECT productID, productName, category, price,currentstock, ProductsSold FROM ProductsTBL";
+            // Dito tayo nag-JOIN sa inventoryTBL para ma-filter ang Archived items
+            string query = @"SELECT p.productID, p.productName, p.category, p.price, p.currentstock, p.ProductsSold 
+                     FROM ProductsTBL p
+                     LEFT JOIN inventoryTBL i ON p.InventoryID = i.inventoryID
+                     WHERE (i.isArchived = 0 OR i.isArchived IS NULL)";
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connString))

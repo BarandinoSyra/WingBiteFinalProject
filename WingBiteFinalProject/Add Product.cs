@@ -63,15 +63,17 @@ namespace WingBiteFinalProject
 
         private void btnSubmit_Click_1(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtProductName.Text.Trim()) || cmbCategory.SelectedItem == null || string.IsNullOrEmpty(txtUnit.Text.Trim()) || string.IsNullOrEmpty(txtPrice.Text.Trim()) || string.IsNullOrEmpty(txtInventoryID.Text.Trim()))
-            {
+
+            if(string.IsNullOrEmpty(txtProductName.Text.Trim()) || cmbCategory.SelectedItem == null || string.IsNullOrEmpty(txtUnit.Text.Trim()) || string.IsNullOrEmpty(txtPrice.Text.Trim()) || string.IsNullOrEmpty(txtInventoryID.Text.Trim()))
+{
                 MessageBox.Show("Please fill out all fields.");
+                ClearAllFields();
                 return;
             }
-
             if (!int.TryParse(txtInventoryID.Text.Trim(), out int inventoryID))
             {
                 MessageBox.Show("Invalid Inventory ID.");
+                ClearAllFields();
                 return;
             }
 
@@ -85,7 +87,12 @@ namespace WingBiteFinalProject
 
                 try
                 {
-                    string checkQuery = "SELECT currentstock, category FROM inventoryTBL WHERE inventoryID = @ID";
+                    // ADDED: Check if product exists AND is NOT archived
+                    string checkQuery = @"SELECT currentstock, category 
+                              FROM inventoryTBL 
+                              WHERE inventoryID = @ID 
+                              AND (isArchived = 0 OR isArchived IS NULL)";
+
                     SqlCommand cmdCheck = new SqlCommand(checkQuery, conn, transaction);
                     cmdCheck.Parameters.AddWithValue("@ID", inventoryID);
 
@@ -93,9 +100,11 @@ namespace WingBiteFinalProject
                     {
                         if (!reader.Read())
                         {
-                            MessageBox.Show("Inventory ID does not exist.");
+                            // Kung hindi nabasa, pwedeng wala sa DB o kaya ay Archived
+                            MessageBox.Show("Inventory ID does not exist or the product is currently archived.");
                             reader.Close();
                             transaction.Rollback();
+                            ClearAllFields();
                             return;
                         }
 
@@ -107,23 +116,27 @@ namespace WingBiteFinalProject
                         {
                             MessageBox.Show("Category mismatch.");
                             transaction.Rollback();
+                            ClearAllFields();
                             return;
                         }
                         if (currentStock < qtyToDeduct)
                         {
                             MessageBox.Show("Insufficient stock.");
                             transaction.Rollback();
+                            ClearAllFields();
                             return;
                         }
                     }
 
+                    // Check for duplicates in productsTBL
                     string checkDup = "SELECT COUNT(1) FROM productsTBL WHERE InventoryID = @ID";
                     SqlCommand cmdDup = new SqlCommand(checkDup, conn, transaction);
                     cmdDup.Parameters.AddWithValue("@ID", inventoryID);
                     if (Convert.ToInt32(cmdDup.ExecuteScalar()) > 0)
                     {
-                        MessageBox.Show("Inventory ID already exists.");
+                        MessageBox.Show("Inventory ID already exists in the product list.");
                         transaction.Rollback();
+                        ClearAllFields();
                         return;
                     }
 
@@ -134,15 +147,18 @@ namespace WingBiteFinalProject
                     {
                         MessageBox.Show("Product name already exists.");
                         transaction.Rollback();
+                        ClearAllFields();
                         return;
                     }
 
-                    string updateInv = "UPDATE inventoryTBL SET currentstock = currentstock - @Qty WHERE inventoryID = @ID";
+                    // Update inventory and set the lastupdated time
+                    string updateInv = "UPDATE inventoryTBL SET currentstock = currentstock - @Qty, lastupdated = GETDATE() WHERE inventoryID = @ID";
                     SqlCommand cmdUpd = new SqlCommand(updateInv, conn, transaction);
                     cmdUpd.Parameters.AddWithValue("@Qty", qtyToDeduct);
                     cmdUpd.Parameters.AddWithValue("@ID", inventoryID);
                     cmdUpd.ExecuteNonQuery();
 
+                    // Insert new product
                     string insertQuery = "INSERT INTO productsTBL (InventoryID, ProductName, category, currentstock, price) VALUES (@ID, @Name, @Cat, @Qty, @Price)";
                     SqlCommand cmdInsert = new SqlCommand(insertQuery, conn, transaction);
                     cmdInsert.Parameters.AddWithValue("@ID", inventoryID);
@@ -154,13 +170,7 @@ namespace WingBiteFinalProject
 
                     transaction.Commit();
                     MessageBox.Show("Product added successfully.");
-
-                    txtInventoryID.Clear();
-                    txtProductName.Clear();
-                    txtUnit.Clear();
-                    txtPrice.Clear();
-                    cmbCategory.SelectedIndex = -1;
-                    txtInventoryID.Focus();
+                    ClearAllFields();
 
                     if (_mainForm != null) _mainForm.LoadAllProducts();
                 }
@@ -168,12 +178,25 @@ namespace WingBiteFinalProject
                 {
                     transaction.Rollback();
                     MessageBox.Show("Error: " + ex.Message);
+                    ClearAllFields();
                 }
             }
+
         }
       
         private void txtInventoryID_TextChanged(object sender, EventArgs e)
         {
+
+        }
+        public void ClearAllFields()
+        {
+            txtInventoryID.Clear();
+            txtProductName.Clear();
+            txtPrice.Clear();
+            cmbCategory.SelectedItem = -1;
+            txtUnit.Clear();
+            txtInventoryID.Focus();
+
 
         }
 

@@ -167,5 +167,10 @@ namespace WingBiteFinalProject
         {
             UpdateStatus(dgvPreparingOrders, "Serving");
         }
+
+        private void dgvPendingOrders_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
