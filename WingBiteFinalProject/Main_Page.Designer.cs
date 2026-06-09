@@ -148,12 +148,12 @@
             // 
             this.dgvRecentOrders.BackgroundColor = System.Drawing.Color.DarkSeaGreen;
             this.dgvRecentOrders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRecentOrders.Location = new System.Drawing.Point(39, 291);
+            this.dgvRecentOrders.Location = new System.Drawing.Point(12, 291);
             this.dgvRecentOrders.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.dgvRecentOrders.Name = "dgvRecentOrders";
             this.dgvRecentOrders.RowHeadersWidth = 51;
             this.dgvRecentOrders.RowTemplate.Height = 24;
-            this.dgvRecentOrders.Size = new System.Drawing.Size(777, 298);
+            this.dgvRecentOrders.Size = new System.Drawing.Size(828, 341);
             this.dgvRecentOrders.TabIndex = 20;
             this.dgvRecentOrders.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRecentOrders_CellContentClick);
             // 

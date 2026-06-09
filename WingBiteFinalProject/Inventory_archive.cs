@@ -43,7 +43,8 @@ namespace WingBiteFinalProject
                              FORMAT(lastupdated, 'MMMM dd, yyyy hh:mm tt') AS [Date Removed],
                              inventoryID
                              FROM inventoryTBL
-                             WHERE isArchived = 1";
+                             WHERE isArchived = 1
+                             ORDER BY inventoryID DESC";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();

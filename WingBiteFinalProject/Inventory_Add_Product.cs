@@ -13,14 +13,16 @@ namespace WingBiteFinalProject
 {
     public partial class Inventory_Add_Product : Form
     {
-        private string connectionString = "Data Source=YJAIXX_COLIE\\SQLEXPRESS;Initial Catalog=WingBiteDB;Integrated Security=True;Encrypt=false";
+        private string connectionString = "Data Source=DESKTOP-JG0361V\\SQLEXPRESS;Initial Catalog=WingBiteDB;Integrated Security=True;Encrypt=false";
         public Inventory_Add_Product()
         {
             InitializeComponent();
+            GetInventoryID();
         }
         private void GetInventoryID()
         {
-            string query = "SELECT ISNULL(MAX(CAST(inventoryID AS INT)), 0) + 1 FROM inventoryTBL";
+            string query = "SELECT IDENT_CURRENT('inventoryTBL') + 1";
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -29,9 +31,10 @@ namespace WingBiteFinalProject
                     {
                         conn.Open();
                         object result = cmd.ExecuteScalar();
-                        if (result != null)
+
+                        if (result != null && result != DBNull.Value)
                         {
-                            int nextID = Convert.ToInt32(result);
+                            long nextID = Convert.ToInt64(result);
                             lblinventoryID.Text = nextID.ToString("D4");
                         }
                     }
@@ -39,7 +42,7 @@ namespace WingBiteFinalProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Database Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error sa pagkuha ng ID: " + ex.Message);
             }
         }
 
@@ -74,7 +77,7 @@ namespace WingBiteFinalProject
             string id = lblinventoryID.Text;
             string category = cmbCategory.Text;
 
-            string query = "INSERT INTO inventoryTBL (category, currentstock, adjustStock) VALUES ( @Category, @Stock, @AdjustStock)";
+            string query = "INSERT INTO inventoryTBL (category, currentstock, adjustStock) VALUES (@Category, @Stock, @AdjustStock)";
 
             try
             {
@@ -82,9 +85,10 @@ namespace WingBiteFinalProject
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Category", category);
-                        cmd.Parameters.AddWithValue("@Stock", stockValue);
+                        cmd.Parameters.AddWithValue("@Category", cmbCategory.Text);
+                        cmd.Parameters.AddWithValue("@Stock", int.Parse(txtUnit.Text));
                         cmd.Parameters.AddWithValue("@AdjustStock", 0);
+
                         conn.Open();
                         cmd.ExecuteNonQuery();
                     }
@@ -92,12 +96,15 @@ namespace WingBiteFinalProject
 
                 MessageBox.Show("Product successfully saved to database!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                // 1. I-refresh muna ang inputs at ID sa loob ng form na ito
+                ClearInputs();
+                GetInventoryID();
+
+                // 2. Opsyonal: I-update ang Inventory_Tracking kung ito ay open na
+                // Kung gusto mo lang bumalik sa listahan, gawin ito:
                 Inventory_Tracking inventoryTrackingForm = new Inventory_Tracking();
                 inventoryTrackingForm.Show();
                 this.Close();
-
-                ClearInputs();
-                GetInventoryID();
             }
             catch (Exception ex)
             {
@@ -116,6 +123,11 @@ namespace WingBiteFinalProject
             Inventory_Tracking inventory = new Inventory_Tracking();
             inventory.Show();
             this.Hide();
+        }
+
+        private void Inventory_Add_Product_Load(object sender, EventArgs e)
+        {
+            GetInventoryID();
         }
     }
 }

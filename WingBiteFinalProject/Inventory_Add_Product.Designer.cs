@@ -215,6 +215,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Inventory_Add_Product";
             this.Text = "Inventory_Add_Product";
+            this.Load += new System.EventHandler(this.Inventory_Add_Product_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picboxMenuProductManagement)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

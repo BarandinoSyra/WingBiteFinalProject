@@ -113,10 +113,13 @@ namespace WingBiteFinalProject
         }
         private void Main_Page_Load(object sender, EventArgs e)
         {
-            string ShowPendingOrdersQuery = @"SELECT o.OrderID, o.TimePlaced, o.orderType, o.orderstatus
-                                  FROM ordersTBL o
-                                  WHERE o.orderstatus = 'Pending'
-                                  ORDER BY o.OrderID DESC";
+            string ShowPendingOrdersQuery = @"SELECT o.OrderID, 
+                        FORMAT(o.TimePlaced, 'MMM dd, yyyy - hh:mm tt') AS [Time Placed], 
+                        o.orderType, 
+                        o.orderstatus
+                 FROM ordersTBL o
+                 WHERE o.orderstatus = 'Pending'
+                 ORDER BY o.OrderID DESC";
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 try
@@ -126,6 +129,10 @@ namespace WingBiteFinalProject
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
                     dgvRecentOrders.DataSource = dt;
+                    dgvRecentOrders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dgvRecentOrders.RowHeadersVisible = false;
+                    dgvRecentOrders.AllowUserToResizeRows = false;
+                    
 
                 }
                 catch (Exception ex)

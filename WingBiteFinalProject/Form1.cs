@@ -138,7 +138,12 @@ namespace WingBiteFinalProject
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-           
+            this.WindowState = FormWindowState.Maximized;
+        }
+
+        private void LoginForm_Resize(object sender, EventArgs e)
+        {
+          
         }
     }
 }

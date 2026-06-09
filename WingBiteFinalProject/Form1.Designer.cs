@@ -75,7 +75,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(544, 774);
+            this.panel1.Size = new System.Drawing.Size(492, 774);
             this.panel1.TabIndex = 2;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -218,6 +218,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.LoginForm_Load);
+            this.Resize += new System.EventHandler(this.LoginForm_Resize);
             this.panelWallpaper.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picboxWallpaper)).EndInit();
             this.panel1.ResumeLayout(false);
